@@ -2,4 +2,14 @@
 
 = TestManager Overview =
 
+TestManager is a test report management server where your test results will be collected and analyzed.
+
+A centralized collection of test results makes it possible to see all your results in one place. Quickly access your older results and have a common knowledge database about your failed tests, bugs and test script errors.
+
+The common knowledge base helps you analyse your current test results based on your previous experiences. The error database is shared across all results, so all co-workers help each other in the process making bug finding a lot faster.
+
+Trends are also available and are instantly generated while your tests are running. Pie charts, line charts are there for you to help you visualize your current state of testing.
+
+= Features =
+
   * Coming soon...
