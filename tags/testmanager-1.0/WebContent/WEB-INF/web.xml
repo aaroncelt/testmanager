@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TestManager - test tracking and management system.
+  Copyright (C) 2012  Istvan Pamer
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+         http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <context-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:conf/spring/context-*.xml</param-value>
+    </context-param>
+
+    <!-- ================================= LISTENERS ================================= -->
+
+    <listener> <!-- Need to load contextConfigLocation -->
+            <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- ================================= SERVLETS ================================= -->
+
+    <!-- The front controller of the Spring MVC Web application, responsible for handling all application requests -->
+    <servlet>
+        <servlet-name>Spring MVC Dispatcher Servlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:conf/spring/context-config.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- ================================= SERVLET MAPPINGS ================================= -->
+
+    <!-- Map requests to the DispatcherServlet for handling -->
+    <servlet-mapping>
+        <servlet-name>Spring MVC Dispatcher Servlet</servlet-name>
+        <url-pattern>/app/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- ================================= TLDS ================================= -->
+
+    <jsp-config>
+        <taglib>
+            <taglib-uri>/spring</taglib-uri>
+            <taglib-location>/WEB-INF/tld/spring-form.tld</taglib-location>
+        </taglib>
+    </jsp-config>
+
+</web-app>

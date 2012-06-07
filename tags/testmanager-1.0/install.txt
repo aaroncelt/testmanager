@@ -1,0 +1,49 @@
+/**
+ * TestManager - test tracking and management system.
+ * Copyright (C) 2012  Istvan Pamer
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
+================================
+== SYSTEM INSTALLATION MANUAL ==
+================================
+
+1. Required tools
+- Tomcat server
+- MySql server
+
+2. MySql setup
+- Run the script: 'resources\database\scripts\create_database.sql' on your database server.
+
+3. Tomcat setup - Optional
+- If you are going to handle thousands of test cases, put these lines to the beginning of \apache-tomcat\bin\startup.bat
+  (Optionally change these values to match your needs.)
+SET JAVA_OPTS=-XX:MaxPermSize=256m -Xms256M -Xmx1024M
+SET CATALINA_OPTS=-XX:MaxPermSize=256m -Xms256M -Xmx1024M
+
+4. Project customization
+- In order to customize TestManager, follow the instructions described in 'resources/config.properties'.
+
+5. Start TestManager
+- Build or use a pre-build jar downloaded from the project site.
+- Deploy it in tomcat. (One way to copy the jar to tomcat/webapps and start tomcat.)
+
+6. Access TestManager
+- Open a browser and type: http://localhost:8080/TestManager/app/index
+  (Or wherever you deployed the application.)
+
+7. Report your tests
+- Use a client driver in your project to help you report your test results.
+- Optionally create some test data in TestManager using 'testmanager-reporting-tester' project.
