@@ -15,6 +15,6 @@ Trends are also available and are instantly generated while your tests are runni
   * TestManager is advised for those who want a good tracking system for their tests. Testers who work together, spending time on test analysis. This tool will greatly increase their performance.
   * You should have full control over your test executor. This means you have to be able to call TestManager's reporting start and stop functions from your code appropriately parameterized. See 'testmanager-tester' project for examples.
 
-= Features =
+=Take a look=
 
-  * Coming soon...
+Check out TestManager's PowerPoint presentation in the Downloads section. There you'll get a quick look on it's features and usage.
