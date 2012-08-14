@@ -19,6 +19,7 @@
         <spring-ibatis.version>2.0.8</spring-ibatis.version>
         <quartz.version>1.5.2</quartz.version>
         <mysql.version>5.1.21</mysql.version>
+        <org.apache.tomcat.version>7.0.29</org.apache.tomcat.version>
 
         <org.slf4j.version>1.6.6</org.slf4j.version>
 
@@ -63,6 +64,12 @@
 		    <groupId>mysql</groupId>
 		    <artifactId>mysql-connector-java</artifactId>
 		    <version>${mysql.version}</version>
+		</dependency>
+		<dependency>  <!-- tomcat file upload dependency -->
+		    <groupId>org.apache.tomcat</groupId>
+		    <artifactId>tomcat-coyote</artifactId>
+		    <version>${org.apache.tomcat.version}</version>
+            <scope>provided</scope>
 		</dependency>
 
         <!-- ================================================== -->
