@@ -17,17 +17,23 @@
 -->
 <%@ include file="/WEB-INF/controllers/include.jsp"%>
 <style type="text/css" media="screen">
-@import url("<c:url value='/styles/results/index.css'/>");
+  @import url("<c:url value='/styles/results/index.css'/>");
+  @import url("<c:url value='/styles/common/resultState.css'/>");
+  @import url("<c:url value='/styles/common/links.css'/>");
+  @import url("<c:url value='/styles/common/table.css'/>");
 </style>
 
 <h1 class="pageName"><fmt:message key="results.table.heading"/></h1>
-
-<table width="95%" border="0" cellspacing="0" cellpadding="5" align="center">
-    <tr>
-        <td class="infobox" colspan="8">
-        	<div id="filterFormText">
-        		<img src="<c:url value="/images/plus.png"/>" /><h2>Filter</h2>
-        	</div>
+        <div class="infobox">
+            <div id="tools">
+        	<span id="filterFormText">
+                Filter
+        	</span>
+            <span id="setListText">
+                Set list
+            </span>
+            </div>
+            <br>
         	<div id="filterForm">
         	<ul class="filterForm">
         		<li>
@@ -36,21 +42,16 @@
 		                    <option value="${env}">${env}</option>
 		                </c:forEach>
 		            </select>
-	            </li>
-	            <li>
             		<textarea id="headFilterArea" rows="1" cols="15"></textarea>
             	</li>
             	<li>
-	            <a id="filterLink_latest" class="filterLink" href="summary" onclick="filterSelected('filterLink_latest');">Latest Results Summary Page</a>
-	            <a id="filterLink_all" class="filterLink" href="all_summary" onclick="filterSelected('filterLink_all');">All Results Summary Page</a>
-	            <a id="filterLink_cp" class="filterLink" href="checkpoint_summary" onclick="filterSelected('filterLink_cp');">Checkpoint Summary Page</a>
+	            <button class="filterLink" filterType="summary" >Latest Results Summary Page</button>
+	            <button class="filterLink" filterType="all_summary" >All Results Summary Page</button>
+	            <button class="filterLink" filterType="checkpoint_summary"  >Checkpoint Summary Page</button>
 	            </li>
             </ul>
             </div>
-        </td>
-    </tr>
-    <tr>
-	        <td class="links" colspan="8">
+	        <div class="links" id="setList">
 		        <ul>
 		         	<c:forEach var="map" items="${map}">
 			         	<li>
@@ -58,9 +59,9 @@
 		         		</li>
 		         	</c:forEach>
 	         	</ul>
-	        </td>
-    </tr>
-
+	        </div>
+        </div>
+<table>
     <tr>
         <th>Set Run</th>
         <th>Action</th>

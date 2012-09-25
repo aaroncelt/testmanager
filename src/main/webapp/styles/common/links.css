@@ -1,0 +1,18 @@
+@CHARSET "UTF-8";
+
+div#content a,div#content a:link,div#content a:active,div#content a:visited
+  {
+  color: #fd9b11;
+  background: transparent;
+  text-decoration: none;
+  font-style: normal;
+}
+
+div#content a:hover {
+  font-style: italic;;
+}
+
+.deleteLink {
+  cursor: pointer;
+  color: #FD9B11;
+}
