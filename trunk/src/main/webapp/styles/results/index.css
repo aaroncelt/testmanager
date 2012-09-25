@@ -1,0 +1,63 @@
+@CHARSET "ISO-8859-1";
+
+.filterForm {
+	display: inline-table;
+	list-style-type: none;
+}
+
+.filterForm a{
+	border-radius: 10px;
+	border: solid 1px grey;
+	padding: 1px 5px 1px 5px;	
+}
+
+.filterForm a:HOVER{
+	border: solid 2px;
+	color: #FD9B11; 
+}
+
+#filterFormText h2,#filterFormText img{
+	display: inline-block;
+}
+
+td {
+    border-top: dotted 1px gray;
+    text-align: center;
+    font-size: small;
+}
+.sectionHeader {
+    border-top: solid 1px black;
+    text-align: left;
+}
+.started { background-color: white; }
+.aborted { background-color: grey; }
+.passed { background-color: #64E986; }
+.failed { background-color: #F75D59; }
+.notavailable { background-color: #77BFC7; }
+.deleteLink {
+    cursor: pointer;
+    color: #FD9B11;
+}
+.pageName {
+    padding-left: 50px;
+}
+.infobox {
+    text-align: left;
+    vertical-align: top;
+    padding: 30px;
+}
+.filterLink {
+    cursor: pointer;
+    color: #FD9B11;
+}
+
+.links ul{
+	clear: both;
+}
+
+.links li{
+	display: inline-table;
+	width: 200px;
+	text-align: left;
+}
+

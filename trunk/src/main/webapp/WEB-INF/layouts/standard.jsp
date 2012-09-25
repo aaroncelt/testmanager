@@ -39,6 +39,7 @@
 
     </head>
     <body>
+    	<div id="progressbar" class="progressbar"><img src="<c:url value='/images/loader.gif'/>"></img></div>
         <div id="page" class="center" >
             <div id="header">
                 <tiles:insertAttribute name="header" />
