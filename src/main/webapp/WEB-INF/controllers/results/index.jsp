@@ -16,76 +16,49 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <%@ include file="/WEB-INF/controllers/include.jsp"%>
-
-<style type="text/css">
-td {
-    border-top: dotted 1px gray;
-    text-align: center;
-    font-size: small;
-}
-.sectionHeader {
-    border-top: solid 1px black;
-    text-align: left;
-}
-.started { background-color: white; }
-.aborted { background-color: grey; }
-.passed { background-color: #64E986; }
-.failed { background-color: #F75D59; }
-.notavailable { background-color: #77BFC7; }
-.deleteLink {
-    cursor: pointer;
-    color: #FD9B11;
-}
-.pageName {
-    padding-left: 50px;
-}
-.infobox {
-    text-align: left;
-    vertical-align: top;
-    padding: 30px;
-}
-.filterLink {
-    cursor: pointer;
-    color: #FD9B11;
-}
+<style type="text/css" media="screen">
+@import url("<c:url value='/styles/results/index.css'/>");
 </style>
-
-<script>
-function deleteSelected(setId) {
-    var r = confirm("Are you sure?");
-    if (r == true) {
-        /*$.get(
-            "delete",
-            { setId: setId },
-            function(data) {
-                window.location.reload();
-            }
-        );*/
-        window.location.href = "delete?setId=" + setId;
-    }
-}
-
-function filterSelected(filterLink) {
-    var temp = $('#' + filterLink).attr('href') + "?filterKey=" + $('#headFilterSelect').val() + "&filterValue=" + $('#headFilterArea').val();
-    $('#' + filterLink).attr('href', temp);
-}
-</script>
 
 <h1 class="pageName"><fmt:message key="results.table.heading"/></h1>
 
 <table width="95%" border="0" cellspacing="0" cellpadding="5" align="center">
     <tr>
         <td class="infobox" colspan="8">
-            <select id="headFilterSelect">
-                <c:forEach var="env" items="${envSet}">
-                    <option value="${env}">${env}</option>
-                </c:forEach>
-            </select>
-            <textarea id="headFilterArea" rows="1" cols="15"></textarea>
-            <a id="filterLink_latest" class="filterLink" href="summary" onclick="filterSelected('filterLink_latest');">Latest Results Summary Page</a>
-            / <a id="filterLink_all" class="filterLink" href="all_summary" onclick="filterSelected('filterLink_all');">All Results Summary Page</a>
-            / <a id="filterLink_cp" class="filterLink" href="checkpoint_summary" onclick="filterSelected('filterLink_cp');">Checkpoint Summary Page</a>
+        	<div id="filterFormText">
+        		<img src="<c:url value="/images/plus.png"/>" /><h2>Filter</h2>
+        	</div>
+        	<div id="filterForm">
+        	<ul class="filterForm">
+        		<li>
+		            <select id="headFilterSelect">
+		                <c:forEach var="env" items="${envSet}">
+		                    <option value="${env}">${env}</option>
+		                </c:forEach>
+		            </select>
+	            </li>
+	            <li>
+            		<textarea id="headFilterArea" rows="1" cols="15"></textarea>
+            	</li>
+            	<li>
+	            <a id="filterLink_latest" class="filterLink" href="summary" onclick="filterSelected('filterLink_latest');">Latest Results Summary Page</a>
+	            <a id="filterLink_all" class="filterLink" href="all_summary" onclick="filterSelected('filterLink_all');">All Results Summary Page</a>
+	            <a id="filterLink_cp" class="filterLink" href="checkpoint_summary" onclick="filterSelected('filterLink_cp');">Checkpoint Summary Page</a>
+	            </li>
+            </ul>
+            </div>
         </td>
+    </tr>
+    <tr>
+	        <td class="links" colspan="8">
+		        <ul>
+		         	<c:forEach var="map" items="${map}">
+			         	<li>
+			         		<a href="#${map.key}" >${map.key}</a>
+		         		</li>
+		         	</c:forEach>
+	         	</ul>
+	        </td>
     </tr>
 
     <tr>
@@ -100,7 +73,7 @@ function filterSelected(filterLink) {
     </tr>
     <c:forEach var="map" items="${map}">
     <tr>
-        <td class="sectionHeader" colspan="8">
+        <td class="sectionHeader" colspan="8" id="${map.key}">
             ${map.key} - <a href="time_lapse?setName=${map.key}">Time Lapse View</a> - <a href="set_summary?setName=${map.key}">Set Summary View</a>
         </td>
     </tr>
