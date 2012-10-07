@@ -17,7 +17,13 @@
 -->
 <%@ include file="/WEB-INF/controllers/include.jsp"%>
 <style type="text/css" media="screen">
-@import url("<c:url value='/styles/results/table.css'/>");
+@import url("<c:url value='/styles/results/table/charts.css'/>");
+@import url("<c:url value='/styles/results/table/setInfo.css'/>");
+@import url("<c:url value='/styles/common/table.css'/>");
+@import url("<c:url value='/styles/common/links.css'/>");
+@import url("<c:url value='/styles/common/filter.css'/>");
+@import url("<c:url value='/styles/common/tools.css'/>");
+@import url("<c:url value='/styles/common/resultState.css'/>");
 </style>
 
 <script>
@@ -40,20 +46,33 @@ var cpDatas = [${cpPieChartData.dataString}];
 				pattern="yyyy/MM/dd HH:mm" />
 			- <a href="generate_xls?setId=${setId}">Generate XLS</a>
 		</h3>
+        <div id="tools">
+	       	<div>
+       			<span id="filter">Filter</span>
+	       	</div>
+	       	<div>
+        		<span id="charts">Charts</span>
+	        </div>
+        </div>
 	</div>
 </c:if>
-
-<table id="main">
-	<tr>
-		<td class="infobox" colspan="4">
-			<div id="charts">
-				<%@ include file="/WEB-INF/controllers/results/pie_charts_table.jsp"%>
+<br>
+	<div>
+		<div class="infobox">
+			<div class="report">
+				<div class="charts">
+					<%@ include file="/WEB-INF/controllers/results/pie_charts_table.jsp"%>
+				</div>
+				<div class="setInfo">
+		            <%@ include file="/WEB-INF/controllers/results/set_info.jsp"%>
+				</div>
 			</div>
-		</td>
-		<td colspan="3" style="vertical-align: top;"><%@ include
-				file="/WEB-INF/controllers/results/set_info.jsp"%>
-		</td>
-	</tr>
+			<div class="filter">
+		        <%@ include file="/WEB-INF/controllers/results/filter_module.jsp"%>
+	        </div>
+		</div>
+	</div>
+<table id="main">
 	<tr>
 		<th></th>
 		<th class="testName">Test Name</th>
@@ -69,8 +88,8 @@ var cpDatas = [${cpPieChartData.dataString}];
 		</th>
 	</tr>
 	<c:forEach var="test" items="${testRunData}" varStatus="row">
-		<tr
-			<c:if test="${test.state != 'PASSED' && test.state != 'STARTED' && test.errorComment == null}">class="commentless"</c:if>>
+		<tr class="tableRow
+			<c:if test="${test.state != 'PASSED' && test.state != 'STARTED' && test.errorComment == null}"> commentless</c:if>">
 			<td><c:if test="${!empty test.checkPoints}">
 					<img src="<c:url value="/images/plus.png"/>" class="link"
 						testname='${test.testName}' paramname='${test.paramName}'
@@ -80,7 +99,7 @@ var cpDatas = [${cpPieChartData.dataString}];
 				target="_blank">${test.displayTestName}</a></td>
 			<td>${test.displayParamName}</td>
 			<td>${test.displayExecutionTime}</td>
-			<td>${test.checkPoints.size()} / <c:set var="failedCp" value="0" />
+			<td class="checkPointNumber">${test.checkPoints.size()} / <c:set var="failedCp" value="0" />
 				<c:forEach var="cp" items="${test.checkPoints}">
 					<c:if test="${cp.state != 'PASSED'}">
 						<c:set var="failedCp" value="${failedCp + 1 }" />
@@ -89,26 +108,26 @@ var cpDatas = [${cpPieChartData.dataString}];
 			</td>
 			<c:choose>
 				<c:when test="${test.state == 'STARTED'}">
-					<td class='started'>${test.state}</td>
+					<td class='resultState started'>${test.state}</td>
 				</c:when>
 				<c:when test="${test.state == 'PASSED'}">
-					<td class='passed'>${test.state}</td>
+					<td class='resultState passed'>${test.state}</td>
 				</c:when>
 				<c:when test="${test.state == 'FAILED'}">
-					<td class='failed'>${test.state}</td>
+					<td class='resultState failed'>${test.state}</td>
 				</c:when>
 				<c:when test="${test.state == 'NOT_AVAILABLE'}">
-					<td class='notavailable'>${test.state}</td>
+					<td class='resultState notavailable'>${test.state}</td>
 				</c:when>
 				<c:when test="${test.state == 'ABORTED'}">
-					<td class='aborted'>${test.state}</td>
+					<td class='resultState aborted'>${test.state}</td>
 				</c:when>
 				<c:otherwise>
-					<td>${test.state}</td>
+					<td class="resultState">${test.state}</td>
 				</c:otherwise>
 			</c:choose>
-			<td>${test.displayErrorMessage}</td>
-			<td><c:if
+			<td class="errorMessage">${test.displayErrorMessage}</td>
+			<td class="errorType"><c:if
 					test="${test.state != 'PASSED' && test.state != 'STARTED'}">
 					<select id="errorType-${row.index}">
 						<c:set var="done" value="false" />
@@ -130,7 +149,7 @@ var cpDatas = [${cpPieChartData.dataString}];
 						</c:forEach>
 					</select>
 				</c:if></td>
-			<td><c:if
+			<td class="comment"><c:if
 					test="${test.state != 'PASSED' && test.state != 'STARTED'}">
 					<c:choose>
 						<c:when test="${test.errorComment == null}">

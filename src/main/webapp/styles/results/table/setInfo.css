@@ -1,0 +1,14 @@
+table#envInfo .headerRow td {
+	text-align: center;
+	font-weight: bold;
+}
+
+table#envInfo td {
+	text-align: left;
+	border-bottom: dotted 1px gray;
+}
+
+table#envInfo{
+	padding-left: 10px;
+	border:solid 2px ghostwhite;
+}

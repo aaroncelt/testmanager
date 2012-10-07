@@ -1,0 +1,30 @@
+div.chart {
+	padding-top: 10px; width : 400px;
+	height: 250px;
+	width: 400px;
+}
+
+div.charts th {
+	text-align: center;
+	border: dotted 1px grey;
+	padding: 2px 2px 2px 2px;
+}
+
+div.charts td {
+	text-align: left;
+	border: dotted 1px grey;
+}
+
+div.charts table {
+	text-align: left;
+	border: solid 2px grey;
+	width: 400px;
+}
+
+div.report{
+	display: -webkit-box;
+}
+
+div.charts{
+	border: solid 2px ghostwhite;
+}

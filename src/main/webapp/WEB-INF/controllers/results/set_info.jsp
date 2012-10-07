@@ -1,6 +1,6 @@
-<table id="setInfo">
-	<tr>
-		<th colspan="3" style="text-align: center">Set Info</th>
+<table id="envInfo">
+	<tr class="headerRow">
+		<td colspan="3">Set Info</td>
 	</tr>
 	<tr>
 		<td>Execution time</td>
@@ -9,8 +9,8 @@
 	</tr>
 	<tr />
 	<tr />
-	<tr>
-		<th colspan="3" style="text-align: center">Environment</th>
+	<tr class="headerRow">
+		<td colspan="3" style="text-align: center">Environment</td>
 	</tr>
 	<c:forEach var="env" items="${testRunData[0].environment}">
 		<tr>

@@ -1,15 +1,65 @@
 @CHARSET "UTF-8";
 
-table {
-  width: 95%;
-  border: 0;
-  padding: 5px;
-  text-align: center;
-  border-spacing: 0;
+table#main {
+	width: 95%;
+	border: 0;
+	padding: 5px;
+	text-align: center;
+	border-collapse: collapse;
+	border-spacing: 0;
 }
 
-td {
-  border-top: dotted 1px gray;
-  text-align: center;
-  font-size: small;
+table#main td {
+	border-top: dotted 1px gray;
+	text-align: center;
+	font-size: small;
+}
+
+.commentless {
+	background-color: #E8E8FF;
+}
+
+.suggestion {
+	color: gray;
+}
+
+.testName {
+	max-width: 450px;
+	text-align: left;
+}
+
+.deleteLink {
+	cursor: pointer;
+	color: #FD9B11;
+}
+
+.saveLink {
+	cursor: pointer;
+	color: #FD9B11;
+}
+
+.link {
+	cursor: pointer;
+}
+
+.saveLinkHidden {
+	color: black;
+	display: none;
+}
+
+table#main a,table#main a:link,table#main a:active,table#main a:visited
+	{
+	color: #fd9b11;
+	background: transparent;
+	text-decoration: none;
+	font-style: normal;
+}
+
+table#main a:hover {
+	font-style: italic;;
+}
+
+table#main td.sectionHeader {
+	border-top: solid 1px black;
+	text-align: left;
 }

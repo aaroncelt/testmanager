@@ -1,0 +1,19 @@
+#tools span {
+	display: inline-block;
+	padding: 5px 5px 5px 5px;
+	background: #E5EFF5;
+	border-radius: 5px 5px 5px 5px;
+	font-family: "Arial";
+	font-weight: bold;
+}
+
+#tools div {
+	float: left;
+	padding: 5px 5px 5px 5px;
+}
+
+.infobox {
+  text-align: left;
+  vertical-align: top;
+  padding: 30px;
+}

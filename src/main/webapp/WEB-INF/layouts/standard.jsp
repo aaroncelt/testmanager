@@ -28,7 +28,7 @@
         </title>
 
         <style type="text/css" media="screen">
-            @import url("<c:url value="/styles/standard2.css" />");
+            @import url("<c:url value="/styles/standard.css" />");
         </style>
 
         <tiles:useAttribute id="jslist" name="javascripts" classname="java.util.List" ignore="true" />

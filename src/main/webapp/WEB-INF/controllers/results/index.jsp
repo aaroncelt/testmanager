@@ -19,8 +19,10 @@
 <style type="text/css" media="screen">
   @import url("<c:url value='/styles/results/index.css'/>");
   @import url("<c:url value='/styles/common/resultState.css'/>");
+  @import url("<c:url value='/styles/common/filter.css'/>");
   @import url("<c:url value='/styles/common/links.css'/>");
   @import url("<c:url value='/styles/common/table.css'/>");
+  @import url("<c:url value='/styles/common/tools.css'/>");
 </style>
 
 <h1 class="pageName"><fmt:message key="results.table.heading"/></h1>
@@ -61,7 +63,7 @@
 	         	</ul>
 	        </div>
         </div>
-<table>
+<table id="main">
     <tr>
         <th>Set Run</th>
         <th>Action</th>

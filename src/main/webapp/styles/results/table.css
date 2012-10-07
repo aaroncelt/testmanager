@@ -1,62 +1,5 @@
 @CHARSET "ISO-8859-1";
 
-td {
-	border-top: dotted 1px gray;
-	text-align: center;
-	font-size: small;
-}
-
-.testName {
-	max-width: 450px;
-	text-align: left;
-}
-
-.suggestion {
-	color: gray;
-}
-
-.started {
-	background-color: white;
-}
-
-.aborted {
-	background-color: grey;
-}
-
-.passed {
-	background-color: #64E986;
-}
-
-.failed {
-	background-color: #F75D59;
-}
-
-.notavailable {
-	background-color: #77BFC7;
-}
-
-.saveLink {
-	cursor: pointer;
-	color: #FD9B11;
-}
-
-.link {
-	cursor: pointer;
-}
-
-.saveLinkHidden {
-	color: black;
-	display: none;
-}
-
-.commentless {
-	background-color: #E8E8FF;
-}
-
-.pageName {
-	padding-left: 50px;
-}
-
 .headingDiv {
 	padding-left: 100px;
 	padding-bottom: 10px;
@@ -68,12 +11,6 @@ td {
 	padding: 30px;
 }
 
-.chart {
-	width: 400px;
-	height: 250px;
-	margin: 0 auto
-}
-
 table#main {
 	width: 95%;
 	border: 0px;
@@ -82,10 +19,8 @@ table#main {
 	text-align: center;
 }
 
-table#checkPointTable {
-	width: 100%;
-}
-
-table#checkPointTable td, table#setInfo td {
-	text-align: left;
+table#main td {
+	border-top: dotted 1px gray;
+	text-align: center;
+	font-size: small;
 }
