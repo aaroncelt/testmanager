@@ -84,10 +84,10 @@ $(document).ready(
 			// Filter, Search show/hide
 			$('div.filterModule').toggle();
 			$('div#tools #filter').click(function() {
-				$('div.filterModule').toggle(1000);
+				$('div.filterModule').toggle();
 			});
 			$('div#tools #charts').click(function() {
-				$('div.report').toggle(1000);
+				$('div.report').toggle();
 			});
 
 			createPieChart('chart-main', '', datas);
