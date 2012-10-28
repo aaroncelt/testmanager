@@ -3,11 +3,11 @@ $(document).ready(function() {
 	$('#setList').toggle();
 
 	$('#filterFormText').click(function() {
-		$('#filterForm').toggle(1000);
+		$('#filterForm').toggle();
 	});
 
 	$('#setListText').click(function() {
-		$('#setList').toggle(1000);
+		$('#setList').toggle();
 	});
 
 	$('button.filterLink').each(function(i, element) {
