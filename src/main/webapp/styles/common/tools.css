@@ -5,6 +5,12 @@
 	border-radius: 5px 5px 5px 5px;
 	font-family: "Arial";
 	font-weight: bold;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+}
+
+#tools span:HOVER {
+	cursor: pointer;
 }
 
 #tools div {
@@ -13,7 +19,7 @@
 }
 
 .infobox {
-  text-align: left;
-  vertical-align: top;
-  padding: 30px;
+	text-align: left;
+	vertical-align: top;
+	padding: 30px;
 }
