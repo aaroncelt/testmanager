@@ -55,6 +55,9 @@
             </div>
 	        <div class="links" id="setList">
 		        <ul>
+		           <li>
+		              <span>Jump to:</span>
+	               </li>   
 		         	<c:forEach var="map" items="${map}">
 			         	<li>
 			         		<a href="#${map.key}" >${map.key}</a>
