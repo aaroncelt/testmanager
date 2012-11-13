@@ -92,7 +92,7 @@ var cpDatas = [${cpPieChartData.dataString}];
 			<c:if test="${test.state != 'PASSED' && test.state != 'STARTED' && test.errorComment == null}"> commentless</c:if>">
 			<td><c:if test="${!empty test.checkPoints}">
 					<img src="<c:url value="/images/plus.png"/>" class="link"
-						testname='${test.testName}' paramname='${test.paramName}'
+                        testname="<c:out value="${test.testName}"/>" paramname='${test.paramName}'
 						index='${row.index}' />
 				</c:if></td>
 			<td class="testName"><a href="${test.linkToResult}"
