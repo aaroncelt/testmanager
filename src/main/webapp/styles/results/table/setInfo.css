@@ -11,4 +11,5 @@ table#envInfo td {
 table#envInfo{
 	padding-left: 10px;
 	border:solid 2px ghostwhite;
+	width: 400px
 }
