@@ -55,24 +55,32 @@ $(document).ready(
 				}
 			});
 
+			filterFunc = function() {
+				var type = $('#filterType option:selected').val();
+				var filterText = $('#filterValue #text').val();
+				if ("errorType" === type) {
+					filterText = $('#filterValue #errorTypes').find(
+							'option:selected').val();
+				} else if ("resultState" === type) {
+					filterText = $('#filterValue #resultStates').find(
+							'option:selected').val();
+				} else if ("isAnalyzed" === type) {
+					filterByAnalyzed($('#filterValue #checkBox').is(
+							":checked"));
+					return;
+				}
+				filterResult(type, filterText);
+			};
 			// Filter button click
-			$('#filterButton').click(
-					function() {
-						var type = $('#filterType option:selected').val();
-						var filterText = $('#filterValue #text').val();
-						if ("errorType" === type) {
-							filterText = $('#filterValue #errorTypes').find(
-									'option:selected').val();
-						} else if ("resultState" === type) {
-							filterText = $('#filterValue #resultStates').find(
-									'option:selected').val();
-						} else if ("isAnalyzed" === type) {
-							filterByAnalyzed($('#filterValue #checkBox').is(
-									":checked"));
-							return;
-						}
-						filterResult(type, filterText);
-					});
+			$('#filterButton').click(filterFunc);
+			
+			//Input field enter
+			$('#filterValue #text').keyup(function(ev) {
+				   // 13 is ENTER
+				   if (ev.which === 13) {
+					   filterFunc();
+				   }
+				}); 
 
 			// Clear button click
 			$('#filterClear').click(function() {
@@ -82,12 +90,14 @@ $(document).ready(
 			});
 
 			// Filter, Search show/hide
-			$('div.filterModule').toggle();
+			$('div.filterModule').hide();
 			$('div#tools #filter').click(function() {
-				$('div.filterModule').toggle();
+				$('div.filterModule').show();
+				$('div.report').hide();
 			});
 			$('div#tools #charts').click(function() {
-				$('div.report').toggle();
+				$('div.filterModule').hide();
+				$('div.report').show();
 			});
 
 			createPieChart('chart-main', '', datas);
