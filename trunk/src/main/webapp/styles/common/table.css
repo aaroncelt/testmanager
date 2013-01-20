@@ -63,3 +63,7 @@ table#main td.sectionHeader {
 	border-top: solid 1px black;
 	text-align: left;
 }
+
+table#checkPointTable {
+	width: 100%;
+}
