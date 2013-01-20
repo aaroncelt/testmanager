@@ -23,6 +23,7 @@ div.charts table {
 
 div.report{
 	display: -webkit-box;
+	display: -moz-box;
 }
 
 div.charts{
