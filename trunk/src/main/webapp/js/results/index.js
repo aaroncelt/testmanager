@@ -5,11 +5,11 @@ $(document).ready(
 
             $('#filterFormText').click(function() {
                 $('#setList').hide();
-                $('#filterForm').show();
+                $('#filterForm').toggle();
             });
 
             $('#setListText').click(function() {
-                $('#setList').show();
+                $('#setList').toggle();
                 $('#filterForm').hide();
             });
 
