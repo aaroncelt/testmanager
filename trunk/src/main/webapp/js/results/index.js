@@ -4,11 +4,13 @@ $(document).ready(
             $('#setList').toggle();
 
             $('#filterFormText').click(function() {
-                $('#filterForm').toggle();
+                $('#setList').hide();
+                $('#filterForm').show();
             });
 
             $('#setListText').click(function() {
-                $('#setList').toggle();
+                $('#setList').show();
+                $('#filterForm').hide();
             });
 
             $('button.filterLink').each(

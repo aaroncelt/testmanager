@@ -8,5 +8,5 @@ a,a:link,a:active,a:visited
 }
 
 a:hover {
-	font-style: italic;;
+	text-decoration: underline;
 }
