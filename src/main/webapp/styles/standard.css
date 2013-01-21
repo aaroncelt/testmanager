@@ -94,7 +94,7 @@ div#welcome div.right {
 div#main {
 	border-radius: 15px;
 	-moz-border-radius: 15px;
-	padding: 0px 5px;
+	padding: 10px 5px;
 }
 
 div#content {
@@ -185,4 +185,59 @@ div#footer {
 	border-top: 1px solid #c3bbb6;
 	text-align: center;
 	font-style: italic;
+}
+
+.clear-both{
+	height: 0px;
+	clear: both;
+}
+
+
+.progressbar {
+	display: none;
+	background: rgba(0, 0, 0, 0.63);
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	z-index: 1001;
+}
+
+.progressbar img {
+	position: relative;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	background: black;
+	border-radius: 10px;
+	top: 300px;
+}
+
+.clear-both{
+	height: 0px;
+	clear: both;
+}
+
+
+.progressbar {
+	display: none;
+	background: rgba(0, 0, 0, 0.63);
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	z-index: 1001;
+}
+
+.progressbar img {
+	position: relative;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	background: black;
+	border-radius: 10px;
+	top: 300px;
+}
+
+.clear-both{
+	height: 0px;
+	clear: both;
 }

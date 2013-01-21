@@ -28,6 +28,7 @@
         <put-attribute name="body" value="/WEB-INF/controllers/results/index.jsp" />
         <put-list-attribute name="javascripts">
             <add-attribute value="/js/jquery.min.js" />
+            <add-attribute value="/js/jquery.cookie.js" />
             <add-attribute value="/js/results/index.js" />
         </put-list-attribute>
     </definition>
