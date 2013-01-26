@@ -28,6 +28,8 @@
 @import url("<c:url value='/styles/common/table.css'/>");
 
 @import url("<c:url value='/styles/common/tools.css'/>");
+
+@import url("<c:url value='/styles/results/env_popup.css'/>");
 </style>
 
 <h1 class="pageName">
@@ -47,8 +49,7 @@
                     </c:forEach>
             </select> <textarea id="headFilterArea" rows="1" cols="15"></textarea></li>
             <li>
-                <button class="filterLink" filterType="summary">Latest
-                    Results Summary Page</button>
+                <button class="filterLink" filterType="summary">Latest Results Summary Page</button>
                 <button class="filterLink" filterType="all_summary">All
                     Results Summary Page</button>
                 <button class="filterLink"
@@ -76,6 +77,7 @@
     </div>
 </div>
 <div class="clear-both"></div>
+<%@ include file="/WEB-INF/controllers/results/env_popup.jsp"%>
 <c:forEach var="map" items="${map}">
     <div class="set-results-box" id="${map.key}">
         <span> ${map.key} - <a
@@ -83,6 +85,16 @@
             href="set_summary?setName=${map.key}">Set Summary View</a>
         </span>
         <table>
+            <tr>
+                <th>Set Run</th>
+                <th>Action</th>
+                <th>Environment</th>
+                <th>Running Tests</th>
+                <th>Finished Tests</th>
+                <th>Passed</th>
+                <th>Failed</th>
+                <th>N/A</th>
+            </tr>
             <c:forEach var="set" items="${map.value}">
                 <tr>
                     <td><a href="table?setId=${set.id}"><fmt:formatDate
@@ -91,13 +103,11 @@
                             (${set.displayExecutionTime})</a></td>
                     <td><span class="deleteLink"
                         onclick="deleteSelected('${set.id}');">DELETE</span></td>
-                    <td class="env">
-                        <div>
-                            <c:forEach var="env"
-                                items="${set.environment}">
-                                ${env.key}=${env.value}
-                            </c:forEach>
-                        </div>
+                    <td class="env" title="Click here to see the full environment variables list">
+                        <c:forEach var="env"
+                            items="${set.environment}">
+                            ${env.key}=${env.value}
+                        </c:forEach>
                     </td>
                     <td>${set.runningTestNumber}</td>
                     <td>${set.finishedTestNumber}</td>
@@ -115,39 +125,3 @@
         </table>
     </div>
 </c:forEach>
-<!--  <table id="main">
-    <tr>
-        <th>Set Run</th>
-        <th>Action</th>
-        <th>Environment</th>
-        <th>Running Tests</th>
-        <th>Finished Tests</th>
-        <th>Passed</th>
-        <th>Failed</th>
-        <th>N/A</th>
-    </tr>
-    <c:forEach var="map" items="${map}">
-    <tr>
-        <td class="sectionHeader" colspan="8" id="${map.key}">
-            ${map.key} - <a href="time_lapse?setName=${map.key}">Time Lapse View</a> - <a href="set_summary?setName=${map.key}">Set Summary View</a>
-        </td>
-    </tr>
-        <c:forEach var="set" items="${map.value}">
-        <tr>
-            <td><a href="table?setId=${set.id}"><fmt:formatDate value="${set.startDate}" pattern="yyyy/MM/dd HH:mm"/> (${set.displayExecutionTime})</a></td>
-            <td><span class="deleteLink" onclick="deleteSelected('${set.id}');">DELETE</span></td>
-            <td>
-               <c:forEach var="env" items="${set.environment}">
-                   ${env.key}=${env.value}
-               </c:forEach>
-            </td>
-            <td>${set.runningTestNumber}</td>
-            <td>${set.finishedTestNumber}</td>
-            <td class='passed'>${set.resultStatPassed} (${fn:substringBefore(set.resultStatPassed / set.finishedTestNumber * 100, '.')}%)</td>
-            <td class='failed'>${set.resultStatFailed} (${fn:substringBefore(set.resultStatFailed / set.finishedTestNumber * 100, '.')}%)</td>
-            <td class='notavailable'>${set.resultStatNA} (${fn:substringBefore(set.resultStatNA / set.finishedTestNumber * 100, '.')}%)</td>
-        </tr>
-        </c:forEach>
-    </c:forEach>
-</table>
--->
