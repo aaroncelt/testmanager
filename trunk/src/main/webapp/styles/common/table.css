@@ -29,8 +29,12 @@ table#main td {
 }
 
 .deleteLink {
+    width: 16px;
+    height: 16px;
+    line-height: 1px;
+    display: block;
 	cursor: pointer;
-	color: #FD9B11;
+	background: url(../../images/trash.png);
 }
 
 .saveLink {
