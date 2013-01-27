@@ -102,7 +102,7 @@
                                 pattern="yyyy/MM/dd HH:mm" />
                             (${set.displayExecutionTime})</a></td>
                     <td><span class="deleteLink"
-                        onclick="deleteSelected('${set.id}');">DELETE</span></td>
+                        onclick="deleteSelected('${set.id}');" title="Click here to delete test run"></span></td>
                     <td class="env" title="Click here to see the full environment variables list">
                         <c:forEach var="env"
                             items="${set.environment}">
