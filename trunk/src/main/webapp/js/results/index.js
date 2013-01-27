@@ -70,7 +70,7 @@ $(document).ready(
         });
 
 function deleteSelected(setId) {
-    var r = confirm("Do you realy want to delete the following set? \r\n\n " + setId);
+    var r = confirm("Do you really want to delete the following set? \r\n\n " + setId);
     if (r == true) {
         window.location.href = "delete?setId=" + setId;
     }
