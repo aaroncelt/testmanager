@@ -19,9 +19,9 @@
 <style type="text/css" media="screen">
 @import url("<c:url value='/styles/results/table/charts.css'/>");
 @import url("<c:url value='/styles/results/table/setInfo.css'/>");
+@import url("<c:url value='/styles/results/table/search_module.css'/>");
 @import url("<c:url value='/styles/common/table.css'/>");
 @import url("<c:url value='/styles/common/links.css'/>");
-@import url("<c:url value='/styles/common/filter.css'/>");
 @import url("<c:url value='/styles/common/tools.css'/>");
 @import url("<c:url value='/styles/common/resultState.css'/>");
 </style>
@@ -48,9 +48,6 @@ var cpDatas = [${cpPieChartData.dataString}];
 		</h3>
         <div id="tools">
 	       	<div>
-       			<span id="filter">Filter</span>
-	       	</div>
-	       	<div>
         		<span id="charts">Charts</span>
 	        </div>
         </div>
@@ -67,11 +64,11 @@ var cpDatas = [${cpPieChartData.dataString}];
 		            <%@ include file="/WEB-INF/controllers/results/set_info.jsp"%>
 				</div>
 			</div>
-			<div class="filter">
-		        <%@ include file="/WEB-INF/controllers/results/filter_module.jsp"%>
-	        </div>
 		</div>
 	</div>
+<div id="search-module">
+    <%@ include file="/WEB-INF/controllers/results/search_module.jsp"%>
+</div>
 <table id="main">
 	<tr>
 		<th></th>
@@ -90,6 +87,12 @@ var cpDatas = [${cpPieChartData.dataString}];
 	<c:forEach var="test" items="${testRunData}" varStatus="row">
 		<tr class="tableRow
 			<c:if test="${test.state != 'PASSED' && test.state != 'STARTED' && test.errorComment == null}"> commentless</c:if>">
+            <c:set var="failedCp" value="0" />
+            <c:forEach var="cp" items="${test.checkPoints}">
+                <c:if test="${cp.state != 'PASSED'}">
+                    <c:set var="failedCp" value="${failedCp + 1}" />
+                 </c:if>
+            </c:forEach>
 			<td><c:if test="${!empty test.checkPoints}">
 					<img src="<c:url value="/images/plus.png"/>" class="link"
                         testname="<c:out value="${test.testName}"/>" paramname='${test.paramName}'
@@ -99,13 +102,7 @@ var cpDatas = [${cpPieChartData.dataString}];
 				target="_blank">${test.displayTestName}</a></td>
 			<td>${test.displayParamName}</td>
 			<td>${test.displayExecutionTime}</td>
-			<td class="checkPointNumber">${test.checkPoints.size()} / <c:set var="failedCp" value="0" />
-				<c:forEach var="cp" items="${test.checkPoints}">
-					<c:if test="${cp.state != 'PASSED'}">
-						<c:set var="failedCp" value="${failedCp + 1 }" />
-					</c:if>
-				</c:forEach> ${failedCp}
-			</td>
+			<td class="checkPointNumber">${test.checkPoints.size()} / ${failedCp}</td>
 			<c:choose>
 				<c:when test="${test.state == 'STARTED'}">
 					<td class='resultState started'>${test.state}</td>

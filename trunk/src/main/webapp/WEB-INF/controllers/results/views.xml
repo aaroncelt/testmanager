@@ -45,6 +45,7 @@
             <add-attribute value="/js/highcharts/highcharts.js" />
             <add-attribute value="/js/highcharts.testmanager.js" />
             <add-attribute value="/js/results/table.js" />
+            <add-attribute value="/js/results/table/search_module.js" />
         </put-list-attribute>
     </definition>
 
