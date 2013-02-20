@@ -1,0 +1,44 @@
+@CHARSET "ISO-8859-1";
+
+#search-module {
+    position: relative;
+    margin-top: 3px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#search-module input {
+    float: left;
+    position: relative;
+    top: -5px;
+}
+
+#search-module div#found-item-message {
+    display: none;
+    float: left;
+    font-size: small;
+    font-style: italic;
+    color: lightgray;
+    float: left;
+    margin-left: 3px;
+}
+
+#search-module span.search-icon {
+    float: left;
+    width: 16px;
+    height: 16px;
+    margin-left: 5px;
+    background: #fff url(../../../images/search.png);
+}
+
+#search-module span.clear-icon {
+    float: left;
+    width: 16px;
+    height: 16px;
+    background: #fff url(../../../images/clear.png);
+    margin-left: 5px;
+}
