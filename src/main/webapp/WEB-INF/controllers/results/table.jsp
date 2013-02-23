@@ -56,7 +56,7 @@ var cpDatas = [${cpPieChartData.dataString}];
 <br>
 	<div>
 		<div class="infobox">
-			<div class="report">
+			<div class="report" style="display: none;">
 				<div class="charts">
 					<%@ include file="/WEB-INF/controllers/results/pie_charts_table.jsp"%>
 				</div>
@@ -70,7 +70,7 @@ var cpDatas = [${cpPieChartData.dataString}];
     <%@ include file="/WEB-INF/controllers/results/search_module.jsp"%>
 </div>
 <table id="main">
-	<tr>
+	<tr class="header-row">
 		<th></th>
 		<th class="testName">Test Name</th>
 		<th>Parameter Name</th>
@@ -85,7 +85,7 @@ var cpDatas = [${cpPieChartData.dataString}];
 		</th>
 	</tr>
 	<c:forEach var="test" items="${testRunData}" varStatus="row">
-		<tr class="tableRow
+		<tr class="table-row
 			<c:if test="${test.state != 'PASSED' && test.state != 'STARTED' && test.errorComment == null}"> commentless</c:if>">
             <c:set var="failedCp" value="0" />
             <c:forEach var="cp" items="${test.checkPoints}">
