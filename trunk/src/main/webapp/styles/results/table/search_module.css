@@ -33,6 +33,7 @@
     height: 16px;
     margin-left: 5px;
     background: #fff url(../../../images/search.png);
+    cursor: pointer;
 }
 
 #search-module span.clear-icon {
@@ -41,4 +42,22 @@
     height: 16px;
     background: #fff url(../../../images/clear.png);
     margin-left: 5px;
+    cursor: pointer;
+}
+
+#search-module div#search-in {
+    position: relative;
+    top: -9px;
+}
+
+#search-module div#search-in span {
+    font-size: 10px;
+    border-left: dotted 1px;
+    padding-left: 3px;
+    padding-right: 3px;
+    cursor: pointer;
+}
+
+#search-module div#search-in span.selected {
+    box-shadow: 0px 0px 5px blue;
 }
