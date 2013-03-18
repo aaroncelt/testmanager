@@ -13,3 +13,16 @@ div.charts div[id^=chart] {
     height: 200px;
     margin: 0 auto;
 }
+
+#time-lapse-order {
+    padding-bottom: 3px;
+}
+
+#time-lapse-order span {
+    cursor: pointer;
+    border: 1px solid;
+    padding: 0px 3px 0px 3px;
+    border-radius: 3px;
+    background-color: rgb(240, 244, 255);
+    font-size: small;
+}

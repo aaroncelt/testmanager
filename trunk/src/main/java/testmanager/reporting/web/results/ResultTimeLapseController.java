@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,7 +50,7 @@ import testmanager.reporting.util.DateUtil;
 
 /**
  * The Class ResultTimeLapseController.
- *
+ * 
  * @author Istvan_Pamer
  */
 @Controller
@@ -58,7 +59,7 @@ public class ResultTimeLapseController {
 
     protected final Log logger = LogFactory.getLog(getClass());
 
-    private int timeLapseColNum = 7;	// overridden from timeLapseColNum property
+    private int timeLapseColNum = 7; // overridden from timeLapseColNum property
 
     @Autowired
     private RunManager runManager;
@@ -72,6 +73,12 @@ public class ResultTimeLapseController {
         }
     };
 
+    private static final Comparator<SetRunManager> SET_RUN_TIME_ORDER_ASC = new Comparator<SetRunManager>() {
+        @Override
+        public int compare(SetRunManager o1, SetRunManager o2) {
+            return o1.getStartDate().compareTo(o2.getStartDate());
+        }
+    };
     @Value("${timelapse.timeLapseColNum}")
     public void setTimeLapseColNum(int timeLapseColNum) {
         this.timeLapseColNum = timeLapseColNum;
@@ -79,12 +86,12 @@ public class ResultTimeLapseController {
 
     /**
      * Controller for handling the test set run view.
-     *
+     * 
      * @return the model and view
      */
     @RequestMapping(value = "time_lapse", method = RequestMethod.GET)
-    public ModelAndView time_lapse(@RequestParam String setName, @RequestParam(required=false) Integer maxColNum,
-            @RequestParam(required=false) String filterKey, @RequestParam(required=false) String filterValue) {
+    public ModelAndView time_lapse(@RequestParam String setName, @RequestParam(required = false) Integer maxColNum, @RequestParam(required = false) String filterKey,
+            @RequestParam(required = false) String filterValue, @CookieValue(required = false, defaultValue = "asc") String timeLapseOrder) {
         logger.info("Opening results/time_lapse page.");
 
         // Set the column number
@@ -95,8 +102,8 @@ public class ResultTimeLapseController {
 
         // Collect the list of SetRunManager which will be displayed
         List<SetRunManager> list = new ArrayList<SetRunManager>();
-        List<SetRunManager> availableSets = new ArrayList<SetRunManager>(runManager.getRunningSets());	// currently no set is transferred to finished sets
-        Collections.sort(availableSets, SET_RUN_TIME_ORDER_DESC);
+        // currently no set is transferred to finished sets
+        List<SetRunManager> availableSets = new ArrayList<SetRunManager>(runManager.getRunningSets());
         for (SetRunManager set : availableSets) {
             if (!set.getFinishedTests().isEmpty() && set.getSetName().equals(setName)) {
                 if (StringUtils.isNotBlank(filterValue)) {
@@ -114,13 +121,28 @@ public class ResultTimeLapseController {
         }
 
         // order the set list
-        Collections.sort(list, SET_RUN_TIME_ORDER_DESC);
+        if ("desc".equals(timeLapseOrder)) {
+            Collections.sort(list, SET_RUN_TIME_ORDER_DESC);
+        } else {
+            Collections.sort(list, SET_RUN_TIME_ORDER_ASC);
+        }
 
-        // gathering time lapse table - key is the test name (name + parameter), the value is a list of sequential runs: statistics + runData
-        Map<String, Pair<AtomicInteger, List<TestRunData>>> map = new TreeMap<String, Pair<AtomicInteger, List<TestRunData>>>();	// table data
-        List<Pair<String, Map<String, String>>> header = new ArrayList<Pair<String, Map<String, String>>>(); // header info: time + environment
-        ChartLineData chartLineData = new ChartLineData();	// data for the pass rate chart
-        ChartLineData chartFailData = new ChartLineData();	// data for the fail diagnosis chart - number of bugs, env. issues, etc. per run
+        // gathering time lapse table - key is the test name (name + parameter),
+        // the value is a list of sequential runs: statistics + runData
+        Map<String, Pair<AtomicInteger, List<TestRunData>>> map = new TreeMap<String, Pair<AtomicInteger, List<TestRunData>>>(); // table
+                                                                                                                                 // data
+        List<Pair<String, Map<String, String>>> header = new ArrayList<Pair<String, Map<String, String>>>(); // header
+                                                                                                             // info:
+                                                                                                             // time
+                                                                                                             // +
+                                                                                                             // environment
+        ChartLineData chartLineData = new ChartLineData(); // data for the pass
+                                                           // rate chart
+        ChartLineData chartFailData = new ChartLineData(); // data for the fail
+                                                           // diagnosis chart -
+                                                           // number of bugs,
+                                                           // env. issues, etc.
+                                                           // per run
         if (!list.isEmpty()) {
             Pair<AtomicInteger, List<TestRunData>> row;
             String key;
@@ -130,8 +152,10 @@ public class ResultTimeLapseController {
                 fillCharts(setName, list.get(i), chartLineData, chartFailData);
                 for (TestRunData data : list.get(i).getFinishedTests().values()) {
                     // add header info
-                    if (key == null) {	// fill out the header data, only once
-                        header.add(new Pair<String, Map<String, String>>(DateUtil.formatHTMLStyle(list.get(i).getStartDate()), data.getEnvironment()));	// add header info
+                    if (key == null) { // fill out the header data, only once
+                        header.add(new Pair<String, Map<String, String>>(DateUtil.formatHTMLStyle(list.get(i).getStartDate()), data.getEnvironment())); // add
+                                                                                                                                                        // header
+                                                                                                                                                        // info
                     }
                     // fill out the actual column of a test row
                     key = testRunDisplayNameGenerator.generateUniqueTestID(data);
@@ -139,7 +163,8 @@ public class ResultTimeLapseController {
                     if (row == null) {
                         row = new Pair<AtomicInteger, List<TestRunData>>(new AtomicInteger(0), new ArrayList<TestRunData>());
                         map.put(key, row);
-                        if (i > 0) {	// if adding a new test (new row) fill out the missing columns, if there is any
+                        if (i > 0) { // if adding a new test (new row) fill out
+                                     // the missing columns, if there is any
                             for (int j = 0; j < i; j++) {
                                 row.getRight().add(null);
                             }
@@ -147,7 +172,9 @@ public class ResultTimeLapseController {
                     }
                     if (row.getRight().size() < list.size()) {
                         row.getRight().add(data);
-                        if (ResultState.FAILED.equals(data.getState())) {	// add row statistics
+                        if (ResultState.FAILED.equals(data.getState())) { // add
+                                                                          // row
+                                                                          // statistics
                             row.getLeft().incrementAndGet();
                         }
                     } else {
@@ -177,9 +204,7 @@ public class ResultTimeLapseController {
     private void fillCharts(String setName, SetRunManager setRunManager, ChartLineData chartLineData, ChartLineData chartFailData) {
         // Fill chart: pass rate
         chartLineData.addCategory(DateUtil.formatHTMLStyle(setRunManager.getStartDate()));
-        chartLineData.addData(setName, Float.toString(Math.round(
-                (float) setRunManager.getResultStatPassed().get() / (float) setRunManager.getFinishedTestNumber() * 100
-                )));
+        chartLineData.addData(setName, Float.toString(Math.round((float) setRunManager.getResultStatPassed().get() / (float) setRunManager.getFinishedTestNumber() * 100)));
         // Fill chart: fail diagnosis
         chartFailData.addCategory(DateUtil.formatHTMLStyle(setRunManager.getStartDate()));
         int knownIssues = 0;
