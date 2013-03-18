@@ -60,8 +60,10 @@
         <put-attribute name="body" value="/WEB-INF/controllers/results/time_lapse.jsp" />
         <put-list-attribute name="javascripts">
             <add-attribute value="/js/jquery.min.js" />
+            <add-attribute value="/js/jquery.cookie.js" />
             <add-attribute value="/js/highcharts/highcharts.js" />
             <add-attribute value="/js/highcharts.testmanager.js" />
+            <add-attribute value="/js/results/time_lapse.js" />
         </put-list-attribute>
     </definition>
 
