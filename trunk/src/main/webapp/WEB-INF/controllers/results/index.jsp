@@ -85,16 +85,18 @@
             href="set_summary?setName=${map.key}">Set Summary View</a>
         </span>
         <table>
-            <tr>
-                <th>Set Run</th>
-                <th>Action</th>
-                <th>Environment</th>
-                <th>Running Tests</th>
-                <th>Finished Tests</th>
-                <th>Passed</th>
-                <th>Failed</th>
-                <th>N/A</th>
-            </tr>
+            <thead>
+                <tr>
+                    <th>Set Run</th>
+                    <th>Action</th>
+                    <th>Environment</th>
+                    <th>Running Tests</th>
+                    <th>Finished Tests</th>
+                    <th>Passed</th>
+                    <th>Failed</th>
+                    <th>N/A</th>
+                </tr>
+            </thead>
             <c:forEach var="set" items="${map.value}">
                 <tr>
                     <td><a href="table?setId=${set.id}"><fmt:formatDate

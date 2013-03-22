@@ -69,7 +69,7 @@ var cpDatas = [${cpPieChartData.dataString}];
 <div id="search-module">
     <%@ include file="/WEB-INF/controllers/results/search_module.jsp"%>
 </div>
-<table id="main">
+<table class="main">
 	<tr class="header-row">
 		<th></th>
 		<th class="testName">Test Name</th>
