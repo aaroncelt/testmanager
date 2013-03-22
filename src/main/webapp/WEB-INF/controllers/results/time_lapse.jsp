@@ -18,11 +18,10 @@
 <%@ include file="/WEB-INF/controllers/include.jsp"%>
 <style type="text/css" media="screen">
 @import url("<c:url value='/styles/results/table/charts.css'/>");
-@import url("<c:url value='/styles/results/time_lapse.css'/>");
-@import url("<c:url value='/styles/results/table/search_module.css'/>");
 @import url("<c:url value='/styles/common/table.css'/>");
 @import url("<c:url value='/styles/common/links.css'/>");
 @import url("<c:url value='/styles/common/resultState.css'/>");
+@import url("<c:url value='/styles/results/time_lapse.css'/>");
 </style>
 <script>
 var passChartCategories = ${chartLineData.categoryString};
@@ -67,7 +66,7 @@ var failChartData = ${chartFailData.dataString};
     Result order: <span></span>
     </div>
 </div>
-<table id="main">
+<table class="main">
     <thead>
         <tr>
             <td>Test Name</td>
@@ -86,7 +85,7 @@ var failChartData = ${chartFailData.dataString};
         <c:set var="rowStat" value="${row.left}"/>
         <c:set var="rowList" value="${row.right}"/>
         <tr <c:if test="${rowStat == colNum}">class="failingTest"</c:if>>
-            <td class="testName">${map.key}</td>
+            <td>${map.key}</td>
             <c:forEach var="test" items="${rowList}">
                 <c:choose>
                     <c:when test="${test != null}">
@@ -100,11 +99,14 @@ var failChartData = ${chartFailData.dataString};
                         </c:choose>
                         <td class="${cellClass }" title="${test.errorMessage }">
                             <c:choose>
+                                <c:when test="${test.state == 'PASSED' }">
+                                    &nbsp;
+                                </c:when>
                                 <c:when test="${test.errorType != null}">
                                     ${test.errorType} - ${test.errorComment}
                                 </c:when>
                                 <c:otherwise>
-                                    ${test.errorMessage }
+                                    Unanalyzed
                                 </c:otherwise>
                             </c:choose>
                         </td>

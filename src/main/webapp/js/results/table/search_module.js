@@ -50,13 +50,13 @@ $(document).ready(function() {
 
 function showAllRows(){
     if (hiddenRows){
-        $('table#main tr.table-row').show();
+        $('table.main tr.table-row').show();
         hiddenRows = false;
     }
 }
 
 function hideAllRows(){
-    $('table#main tr.table-row').hide();
+    $('table.main tr.table-row').hide();
     hiddenRows = true;
 }
 
@@ -84,7 +84,7 @@ function filter(){
     }
     hiddenRows = true;
     hideAllRows();
-    var allRows = $('table#main tr.table-row');
+    var allRows = $('table.main tr.table-row');
     $.each(filteredIndex, function(i,item){
         $(allRows[item]).show();
     });
@@ -104,10 +104,10 @@ function getRow(cells){
 }
 
 function createCache(){
-    $('table#main').find('tr.table-row').each(function(i,row){
+    $('table.main').find('tr.table-row').each(function(i,row){
         cache.push(getRow($(row).find('td')));
     });
-    $('table#main').find('tr.header-row').each(function(i,row){
+    $('table.main').find('tr.header-row').each(function(i,row){
         headers.push(getRow($(row).find('th')));
     });
 }
