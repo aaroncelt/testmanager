@@ -18,101 +18,129 @@
 package testmanager.reporing.client.test;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.logging.Logger;
 
 import testmanager.reporting.client.ReportManager;
 import testmanager.reporting.client.ReportManager.ResultState;
 import testmanager.reporting.client.ReportParams;
 import testmanager.reporting.client.ReportParams.CheckPointState;
 
-
 public class TestTM {
+    private static final String TEST_SET_PREFIX = "testSet-";
+
+    private static final String TEST_PARAM_NAME = "testParamName";
+
+    private static final String TEST_NAME_PREFIX = "testName-";
+
+    private static Logger LOGGER = Logger.getLogger(TestTM.class.getName());
+
+    private static final String URI_ROOT = "/testmanager/app";
+    private static final String PORT = "8080";
+    private static final String HOST = "localhost";
+
+    private static final String TEST_SCRIPT_ID_PREFIX = "testScriptId-";
+
+    private static final String TEST_SCRIPT_NAME_PREFIX = "testScriptName-";
+
+    private Integer numberOfThreads;
+    private Integer numberOfSets;
+    private Integer numberOfTestcases;
+    private Integer numberOfCheckpoints;
+    private Map<String, String> environment;
+
+    private Integer activeThreads = 0;
+    private Set<Thread> startedThreads = new HashSet<Thread>();
+
+    public TestTM(Integer numberOfThreads, Integer numberOfSets, Integer numberOfTestcases, Integer numberOfCheckpoints, Map<String, String> environment) {
+        this.numberOfThreads = numberOfThreads;
+        this.numberOfSets = numberOfSets;
+        this.numberOfTestcases = numberOfTestcases;
+        this.numberOfCheckpoints = numberOfCheckpoints;
+        this.environment = environment;
+    }
+
+    public void runTestReport() {
+        ReportManager rm = new ReportManager(HOST, PORT, URI_ROOT);
+        if (rm.isMainServiceReachable()) {
+            for (int i = 0; i < numberOfSets; i++) {
+                startReportingThread(i);
+            }
+            for (Thread thread : startedThreads) {
+                try {
+                    thread.join();
+                } catch (InterruptedException e) {
+                    LOGGER.warning(e.getMessage());
+                }
+            }
+            LOGGER.info("Reporting finished.");
+        } else {
+            LOGGER.warning("TestManager not accessible. Terminating...");
+        }
+    }
+
+    private void startReportingThread(int setNumber) {
+        ReportingThread reportingThread = new ReportingThread(setNumber);
+        reportingThread.start();
+        startedThreads.add(reportingThread);
+    }
+
+    private void reportTestSetResult(Integer setNumber) {
+        ReportManager rm = new ReportManager(HOST, PORT, URI_ROOT);
+        Date setStartDate = new Date();
+        for (int i = 0; i < numberOfTestcases; i++) {
+            ReportParams rp = new ReportParams();
+            rp.setTestParam("TEST_SCRIPT_ID", TEST_SCRIPT_ID_PREFIX + i);
+            rp.setTestParam("TEST_SCRIPT_NAME", TEST_SCRIPT_NAME_PREFIX + i);
+            for (Entry<String, String> env : environment.entrySet()) {
+                rp.setEnvironment(env.getKey(), env.getValue());
+            }
+            rm.reportTestStart(TEST_NAME_PREFIX + i, TEST_PARAM_NAME, TEST_SET_PREFIX + setNumber, setStartDate, rp);
+            for (int j = 0; j < numberOfCheckpoints; j++) {
+                rp.setCheckPoint("CheckPoint-" + j, "MainType", "SubType", CheckPointState.PASSED);
+            }
+            rm.reportTestStop(TEST_NAME_PREFIX + i, TEST_PARAM_NAME, TEST_SET_PREFIX + setNumber, setStartDate, ResultState.PASSED, rp);
+        }
+        LOGGER.info("Result reported for Set #" + setNumber);
+    }
+
+    private class ReportingThread extends Thread {
+
+        private static final int RETRY_INTERVAL = 10000;
+        private Integer setNumber;
+
+        private ReportingThread(Integer setNumber) {
+            this.setNumber = setNumber;
+        }
+
+        @Override
+        public void run() {
+            if (activeThreads >= numberOfThreads) {
+                try {
+                    Thread.sleep(RETRY_INTERVAL);
+                } catch (InterruptedException e) {
+                    LOGGER.warning("Thread for set #" + setNumber + " has been interrupted.");
+                }
+                this.run();
+                return;
+            }
+            activeThreads++;
+            reportTestSetResult(setNumber);
+            activeThreads--;
+        }
+    }
 
     /**
      * @param args
      */
     public static void main(String[] args) {
-
-        ReportManager rm = new ReportManager("localhost", "8080", "/TestManager/app");
-
-        System.out.println("Testing if service reachable:");
-        boolean serviceOK = rm.isMainServiceReachable();
-        System.out.println(serviceOK);
-
-        if (serviceOK) {
-            Date now = new Date();
-            ReportParams rp = new ReportParams();
-
-//            testOne(rm, now, rp);
-//            testFew(rm, now, rp);
-            testMany(rm, now, rp);
-
-            // Concurrency test
-//			Date now1 = new Date();
-//			createThread(new ReportManager("localhost", "8080", "/TestManager_reporting/app"), now1, new ReportParams()).start();
-//			createThread(new ReportManager("localhost", "8080", "/TestManager_reporting/app"), new Date(now1.getTime() + 100000), new ReportParams()).start();
-        }
-
+        Map<String, String> environment = new HashMap<String, String>();
+        environment.put("envKey1", "envValue1");
+        environment.put("envKey2", "envValue2");
+        new TestTM(3, 10, 10, 10, environment).runTestReport();
     }
-
-//    private static Thread createThread(final ReportManager rm, final Date now, final ReportParams rp) {
-//        return new Thread() {
-//            @Override
-//            public void run() {
-//                testMany(rm, now, rp);
-//            }
-//        };
-//    }
-
-    private static void testOne(ReportManager rm, Date now, ReportParams rp) {
-        rp.setTestParam("TEST_SCRIPT_ID", "testId111");
-        rp.setTestParam("TEST_SCRIPT_NAME", "testName111");
-        rp.setEnvironment("ek1", "ev1");
-        rp.setEnvironment("ek2", "ev2");
-        rm.reportTestStart("test1", "param1", "./testing/testlist.txt", now, rp);
-        rp.setErrorMessage("Exception 1");
-        rp.setCheckPoint("CheckPoint 1 error message", "HOME_PAGE", "USER_LOGIN", CheckPointState.PASSED);
-        rp.setCheckPoint("CheckPoint 2 error message", "HOME_PAGE", "TEST_MODULE", CheckPointState.FAILED);
-        rm.reportTestStop("test1", "param1", "./testing/testlist.txt", now, ResultState.FAILED, rp);
-    }
-
-    private static void testFew(ReportManager rm, Date now, ReportParams rp) {
-        rm.reportTestStart("test1", "param1", "set1", now, null);
-        rm.reportTestStart("test2", "param1", "set1", now, null);
-        rm.reportTestStart("test1", "param1", "set2", now, null);
-        rm.reportTestStart("test2", "param1", "set2", now, null);
-        rm.reportTestStart("test3", "param1", "set2", now, null);	// not finished
-        rm.reportTestStart("test1", "param1", "./testing/testlist.txt", now, null);
-
-        rm.reportTestStop("test1", "param1", "set1", now, ResultState.PASSED, null);
-        rp.setErrorMessage("Can not find element: XY.");
-        rp.setTestParam("TEST_SCRIPT_ID", "testId111");
-        rp.setTestParam("TEST_SCRIPT_NAME", "testName111");
-        rp.setEnvironment("ek1", "ev1");
-        rp.setEnvironment("ek2", "ev2");
-        rp.setCheckPoint("CheckPoint 1 error message", "HOME_PAGE", "USER_LOGIN", CheckPointState.PASSED);
-        rp.setCheckPoint("CheckPoint 2 error message", "HOME_PAGE", "TEST_MODULE", CheckPointState.FAILED);
-        rm.reportTestStop("test2", "param1", "set1", now, ResultState.FAILED, rp);
-        rm.reportTestStop("test1", "param1", "set2", now, ResultState.ABORTED, null);
-        rp.setErrorMessage("Booking system not available.");
-        rm.reportTestStop("test2", "param1", "set2", now, ResultState.NOT_AVAILABLE, rp);
-        rm.reportTestStop("test1", "param1", "./testing/testlist.txt", now, ResultState.PASSED, null);
-    }
-
-    private static void testMany(ReportManager rm, Date now, ReportParams rp) {
-        int max = 100;
-        rp.setTestParam("TEST_SCRIPT_ID", "testId111");
-        rp.setTestParam("TEST_SCRIPT_NAME", "testName111");
-        rp.setEnvironment("ek1", "ev1");
-        rp.setEnvironment("ek2", "ev2");
-        for (int i = 1; i <= max; i++) {
-            rm.reportTestStart("test" + i, "param1", "concurrentSet", now, rp);
-        }
-
-        rp.setErrorMessage("Exception 1");
-        for (int i = 1; i <= max; i++) {
-            // Intentionally fail 20% of the cases for testing purposes
-            rm.reportTestStop("test" + i, "param1", "concurrentSet", now, (i > max - max / 5) ? ResultState.FAILED : ResultState.PASSED, rp);
-        }
-    }
-
 }
