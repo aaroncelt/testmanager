@@ -20,6 +20,7 @@
 @import url("<c:url value='/styles/results/table/charts.css'/>");
 @import url("<c:url value='/styles/results/table/setInfo.css'/>");
 @import url("<c:url value='/styles/results/table/search_module.css'/>");
+@import url("<c:url value='/styles/results/table/bulk_save.css'/>");
 @import url("<c:url value='/styles/common/table.css'/>");
 @import url("<c:url value='/styles/common/links.css'/>");
 @import url("<c:url value='/styles/common/tools.css'/>");
@@ -69,6 +70,7 @@ var cpDatas = [${cpPieChartData.dataString}];
 <div id="search-module">
     <%@ include file="/WEB-INF/controllers/results/search_module.jsp"%>
 </div>
+<%@ include file="/WEB-INF/controllers/results/bulk_save_popdiv.jsp"%>
 <table class="main">
 	<tr class="header-row">
 		<th></th>
@@ -159,6 +161,7 @@ var cpDatas = [${cpPieChartData.dataString}];
 				</c:if></td>
 			<td><c:if
 					test="${test.state != 'PASSED' && test.state != 'STARTED'}">
+                    <input type="checkbox" class="bulk-select">
 					<span class="saveLink">SAVE</span>
 					<span class="saveLinkHidden">SAVING...</span>
 				</c:if></td>

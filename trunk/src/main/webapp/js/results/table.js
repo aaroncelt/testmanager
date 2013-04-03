@@ -46,6 +46,32 @@ $(document).ready(function() {
             saveLine($(this).closest("tr"));
         });
     });
+
+    // Bulk save popdiv behaviour
+    $("#bulk-save-popdiv").draggable();
+    $("#bulk-comment").click(function() {
+        if ($("#bulk-save-popdiv").is('.ui-draggable-dragging')) {
+            return;
+        }
+        $("#bulk-save-popdiv").draggable("option", "disabled", true);
+    }).focusout(function() {
+        $("#bulk-save-popdiv").draggable('option', 'disabled', false);
+    });
+    $("#bulk-save-popdiv .close-button").click(function() {
+        $("#bulk-save-popdiv").hide();
+    });
+
+    $(".bulk-select").change(function() {
+        if ($(".bulk-select:checked").length > 0) {
+            $("#bulk-save-popdiv").show();
+        } else {
+            $("#bulk-save-popdiv").hide();
+        }
+    });
+
+    $("#bulk-save-button").click(function() {
+        bulkSave();
+    });
     createPieChart('chart-main', '', datas);
     createPieChart('chart-cp', '', cpDatas);
 });
@@ -61,7 +87,20 @@ function saveAll() {
         window.location.reload();
     });
 }
-
+function bulkSave() {
+    $.ajaxSetup({async:false});
+    $("input.bulk-select:checked").each(function() {
+        $("#progressbar").show();
+        var line = $(this).closest("tr");
+        var testName = $(line).find("td.testName").data("test-name");
+        var paramName = $(line).find("td.paramName").data("param-name");
+        var errorType = $("#bulk-error-type").val();
+        var comment = $("#bulk-comment").text();
+        save(setId, testName, paramName, errorType, comment, null);
+    });
+    $.ajaxSetup({async:true});
+    window.location.reload();
+}
 function saveLine(line) {
     var testName = $(line).find("td.testName").data("test-name");
     var paramName = $(line).find("td.paramName").data("param-name");
@@ -72,6 +111,14 @@ function saveLine(line) {
             + " - " + errorType + " - " + comment);
     $(line).find('.saveLink').hide();
     $(line).find('.saveLinkHidden').show();
+    save(setId, testName, paramName, errorType, comment, function() {
+        $(line).find('.saveLinkHidden').hide();
+        $(line).find('.saveLink').show();
+        window.location.reload();
+    });
+}
+
+function save(setId, testName, paramName, errorType, comment, callback) {
     $.get("save", {
         setId : setId,
         testName : testName,
@@ -79,10 +126,11 @@ function saveLine(line) {
         type : errorType,
         comment : comment
     }, function(data) {
-        $(line).find('.saveLinkHidden').hide();
-        $(line).find('.saveLink').show();
-        window.location.reload();
+        if (typeof (callback) === "function") {
+            callback();
+        }
     });
+    
 }
 
 function toggleCp(index) {
