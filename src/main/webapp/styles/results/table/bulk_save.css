@@ -1,0 +1,110 @@
+@CHARSET "UTF-8";
+
+#bulk-save-popdiv {
+    width: 30%;
+    display: none;
+    position: fixed;
+}
+
+#bulk-save-popdiv .header {
+    min-height: 20px;
+    max-height: 20px;
+    border-radius: 5px 5px 0px 0px;
+    background: #295591;
+    position: relative;
+    color: whitesmoke;
+    padding-left: 3px;
+    padding-top: 3px;
+}
+
+#bulk-save-popdiv .body {
+    position: relative;
+    border: solid 1px;
+    border-radius: 0px 0px 5px 5px;
+    background: whitesmoke;
+    min-height: 120px;
+    max-height: 120px;
+    padding: 5px;
+}
+
+label[for=bulk-error-type] {
+    float: left;
+    padding-top: 3px;
+}
+
+#bulk-error-type {
+    float: left;
+}
+
+#bulk-comment {
+    max-height: 60px;
+    min-height: 60px;
+    border: solid 1px;
+    clear: both;
+    background: white;
+    border-radius: 3px;
+    padding: 5px;
+    overflow: auto;
+}
+
+.button {
+    -moz-box-shadow: inset 0px 1px 0px 0px #bbdaf7;
+    -webkit-box-shadow: inset 0px 1px 0px 0px #bbdaf7;
+    box-shadow: inset 0px 1px 0px 0px #bbdaf7;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #79bbff
+        ), color-stop(1, #378de5) );
+    background: -moz-linear-gradient(center top, #79bbff 5%, #378de5 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#79bbff',
+        endColorstr='#378de5' );
+    background-color: #79bbff;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    border: 1px solid #84bbf3;
+    display: inline-block;
+    color: #ffffff;
+    font-family: arial;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 1px 6px;
+    text-decoration: none;
+    text-shadow: 1px 1px 0px #528ecc;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    margin-top: 5px;
+}
+
+.button:hover {
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #378de5
+        ), color-stop(1, #79bbff) );
+    background: -moz-linear-gradient(center top, #378de5 5%, #79bbff 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#378de5',
+        endColorstr='#79bbff' );
+    background-color: #378de5;
+}
+
+.button:active {
+    position: relative;
+    top: 1px;
+}
+
+.button span {
+    cursor: pointer;
+}
+
+.close-button {
+    width: 16px;
+    height: 16px;
+    line-height: 1px;
+    display: block;
+    background: whitesmoke url(../../../images/close_button.png);
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    border-radius: 8px;
+    cursor: pointer;
+}
