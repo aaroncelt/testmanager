@@ -10,22 +10,42 @@ $(document).ready(function() {
         var paramName = $(this).attr('paramname');
         var index = $(this).attr('index');
         $(this).toggle(function() {
-            $('#progressbar').toggle();
+            $('#progressbar').show();
             $.get("checkpoints", {
                 setId : setId,
                 testName : testName,
                 paramName : paramName
             }, function(data) {
                 $('.checkpoints_for_row_' + index).html(data);
-                $('#progressbar').toggle();
-                $('.checkpoints_for_row_' + index).toggle();
+                $('#progressbar').hide();
+                $('.checkpoints_for_row_' + index).show();
             });
         }, function() {
-            $('.checkpoints_for_row_' + index).toggle();
+            $('.checkpoints_for_row_' + index).hide();
         });
 
     });
 
+    $('div[contentEditable=true]').each(function() {
+        var content = $(this).text();
+        $(this).focusin(function() {
+            $(this).addClass("edit-in-progress");
+        });
+        $(this).focusout(function() {
+            $(this).removeClass("edit-in-progress");
+            if (content != $(this).text()) {
+                $(this).addClass("changed");
+            } else {
+                $(this).removeClass("changed");
+            }
+        });
+    });
+
+    $("span.saveLink").each(function() {
+        $(this).click(function() {
+            saveLine($(this).closest("tr"));
+        });
+    });
     createPieChart('chart-main', '', datas);
     createPieChart('chart-cp', '', cpDatas);
 });
@@ -42,18 +62,25 @@ function saveAll() {
     });
 }
 
-function saveSelected(testName, paramName, index) {
-    $('#saveLink-' + index).hide();
-    $('#saveLinkHidden-' + index).show();
+function saveLine(line) {
+    var testName = $(line).find("td.testName").data("test-name");
+    var paramName = $(line).find("td.paramName").data("param-name");
+    var errorType = $(line).find("select.error-type").val();
+    var comment = $(line).find(".comment").text();
+
+    console.log("Saving: " + setId + " - " + testName + " - " + paramName
+            + " - " + errorType + " - " + comment);
+    $(line).find('.saveLink').hide();
+    $(line).find('.saveLinkHidden').show();
     $.get("save", {
         setId : setId,
         testName : testName,
         paramName : paramName,
-        type : $('#errorType-' + index).val(),
-        comment : $('#comment-' + index).val()
+        type : errorType,
+        comment : comment
     }, function(data) {
-        $('#saveLinkHidden-' + index).hide();
-        $('#saveLink-' + index).show();
+        $(line).find('.saveLinkHidden').hide();
+        $(line).find('.saveLink').show();
         window.location.reload();
     });
 }

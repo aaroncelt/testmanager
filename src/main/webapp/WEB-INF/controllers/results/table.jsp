@@ -98,9 +98,9 @@ var cpDatas = [${cpPieChartData.dataString}];
                         testname="<c:out value="${test.testName}"/>" paramname='${test.paramName}'
 						index='${row.index}' />
 				</c:if></td>
-			<td class="testName"><a href="${test.linkToResult}"
+			<td class="testName" data-test-name="${test.testName }"><a href="${test.linkToResult}"
 				target="_blank">${test.displayTestName}</a></td>
-			<td>${test.displayParamName}</td>
+			<td class="paramName" data-param-name="${test.paramName }">${test.displayParamName}</td>
 			<td>${test.displayExecutionTime}</td>
 			<td class="checkPointNumber">${test.checkPoints.size()} / ${failedCp}</td>
 			<c:choose>
@@ -126,7 +126,7 @@ var cpDatas = [${cpPieChartData.dataString}];
 			<td class="errorMessage">${test.displayErrorMessage}</td>
 			<td class="errorType"><c:if
 					test="${test.state != 'PASSED' && test.state != 'STARTED'}">
-					<select id="errorType-${row.index}">
+					<select class="error-type">
 						<c:set var="done" value="false" />
 						<c:forEach var="type" items="${errorTypes}">
 							<c:choose>
@@ -146,23 +146,21 @@ var cpDatas = [${cpPieChartData.dataString}];
 						</c:forEach>
 					</select>
 				</c:if></td>
-			<td class="comment"><c:if
+			<td><c:if
 					test="${test.state != 'PASSED' && test.state != 'STARTED'}">
 					<c:choose>
 						<c:when test="${test.errorComment == null}">
-							<textarea id="comment-${row.index}" class="suggestion" cols="25"
-								rows="2">${test.errorCommentSuggestion}</textarea>
+							<div class="comment suggestion" contenteditable="true">${test.errorCommentSuggestion}</div>
 						</c:when>
 						<c:otherwise>
-							<textarea id="comment-${row.index}" cols="25" rows="2">${test.errorComment}</textarea>
+							<div class="comment" contenteditable="true">${test.errorComment}</div>
 						</c:otherwise>
 					</c:choose>
 				</c:if></td>
 			<td><c:if
 					test="${test.state != 'PASSED' && test.state != 'STARTED'}">
-					<span id="saveLink-${row.index}" class="saveLink"
-						onclick="saveSelected('${test.testName}', '${test.paramName}', '${row.index}');">SAVE</span>
-					<span id="saveLinkHidden-${row.index}" class="saveLinkHidden">SAVING...</span>
+					<span class="saveLink">SAVE</span>
+					<span class="saveLinkHidden">SAVING...</span>
 				</c:if></td>
 		</tr>
 		<tr>
