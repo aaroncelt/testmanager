@@ -82,7 +82,7 @@ var cpDatas = [${cpPieChartData.dataString}];
 		<th>Error Message</th>
 		<th>Error Type</th>
 		<th>Comment</th>
-		<th><span id="saveAllLink" class="saveLink" onclick="saveAll();">SAVE
+		<th><input type="checkbox" class="select-all"><span id="saveAllLink" class="saveLink" onclick="saveAll();">SAVE
 				SUGGESTIONS</span> <span id="saveAllLinkHidden" class="saveLinkHidden">SAVING...</span>
 		</th>
 	</tr>
@@ -152,10 +152,10 @@ var cpDatas = [${cpPieChartData.dataString}];
 					test="${test.state != 'PASSED' && test.state != 'STARTED'}">
 					<c:choose>
 						<c:when test="${test.errorComment == null}">
-							<div class="comment suggestion" contenteditable="true">${test.errorCommentSuggestion}</div>
+							<textarea class="comment suggestion">${test.errorCommentSuggestion}</textarea>
 						</c:when>
 						<c:otherwise>
-							<div class="comment" contenteditable="true">${test.errorComment}</div>
+							<textarea class="comment">${test.errorComment}</textarea>
 						</c:otherwise>
 					</c:choose>
 				</c:if></td>

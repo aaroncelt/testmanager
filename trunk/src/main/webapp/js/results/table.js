@@ -68,6 +68,20 @@ $(document).ready(function() {
             $("#bulk-save-popdiv").hide();
         }
     });
+    
+    $(".select-all").change(function() {
+		if ($(this).is(":checked")){
+			$(".bulk-select:visible").each(function() {
+				$(this).attr('checked', 'checked');
+			});
+			$("#bulk-save-popdiv").show();
+		} else {
+			$(".bulk-select:visible").each(function() {
+				$(this).removeAttr('checked');
+			});
+			$("#bulk-save-popdiv").hide();
+		}
+	});
 
     $("#bulk-save-button").click(function() {
         bulkSave();
