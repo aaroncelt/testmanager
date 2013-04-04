@@ -84,9 +84,14 @@ div[contentEditable=true].changed {
 
 div[contentEditable=true] {
     width: 95%;
-    height: 20px;
+    height: 30px;
     border: solid 1px gray;
     text-align: left;
     padding-left: 3px;
     overflow: overlay;
+}
+
+textarea.comment {
+	width: 100%;
+	height: 100%;
 }
