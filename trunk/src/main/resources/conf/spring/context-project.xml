@@ -27,12 +27,12 @@
     <!-- CUSTOMIZABLE FOR THE PROJECT -->
     <context:component-scan base-package="testmanager" />
 
-    <bean id="testRunXLSGenerator" class="testmanager.reporting.service.excel.HCOMTestRunXLSGenerator">
+    <bean id="testRunXLSGenerator" class="testmanager.reporting.service.excel.DefaultTestRunXLSGenerator">
         <!-- This generator will create XLS report from a test run. -->
         <!-- CUSTOMIZE DefaultTestRunXLSGenerator by implementing TestRunXLSGenerator. -->
     </bean>
 
-    <bean id="testRunDisplayNameGenerator" class="testmanager.reporting.service.naming.impl.HCOMTestRunDisplayNameGenerator">
+    <bean id="testRunDisplayNameGenerator" class="testmanager.reporting.service.naming.impl.DefaultTestRunDisplayNameGenerator">
         <!-- This generator will create nice displayable names for your tests on a test results page. -->
         <!-- CUSTOMIZE DefaultTestRunDisplayNameGenerator by implementing TestRunDisplayNameGenerator. -->
     </bean>
@@ -42,7 +42,7 @@
             <util:map map-class="java.util.HashMap"
                 value-type="testmanager.reporting.service.linkgeneration.LinkGeneratorStrategy">
                 <entry key="default">
-                    <bean class="testmanager.reporting.service.linkgeneration.HCOMHudsonLinkGeneratorStrategy"/>
+                    <bean class="testmanager.reporting.service.linkgeneration.DefaultLinkGeneratorStrategy"/>
                 </entry>
                 <!-- If you have a test set named 'example_test_set', define it's custom link generation strategy
                      by implementing the LinkGeneratorStrategy interface and adding it to this map.
