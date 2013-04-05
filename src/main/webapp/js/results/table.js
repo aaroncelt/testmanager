@@ -119,7 +119,7 @@ function saveLine(line) {
     var testName = $(line).find("td.testName").data("test-name");
     var paramName = $(line).find("td.paramName").data("param-name");
     var errorType = $(line).find("select.error-type").val();
-    var comment = $(line).find(".comment").text();
+    var comment = $(line).find(".comment").val();
 
     console.log("Saving: " + setId + " - " + testName + " - " + paramName
             + " - " + errorType + " - " + comment);
