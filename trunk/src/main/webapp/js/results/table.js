@@ -59,13 +59,16 @@ $(document).ready(function() {
     });
     $("#bulk-save-popdiv .close-button").click(function() {
         $("#bulk-save-popdiv").hide();
+        $(".saveLink").removeClass("save-link-disabled");
     });
 
     $(".bulk-select").change(function() {
         if ($(".bulk-select:checked").length > 0) {
             $("#bulk-save-popdiv").show();
+            $(".saveLink").addClass("save-link-disabled");
         } else {
             $("#bulk-save-popdiv").hide();
+            $(".saveLink").removeClass("save-link-disabled");
         }
     });
     
@@ -75,11 +78,13 @@ $(document).ready(function() {
 				$(this).attr('checked', 'checked');
 			});
 			$("#bulk-save-popdiv").show();
+			$(".saveLink").addClass("save-link-disabled");
 		} else {
 			$(".bulk-select:visible").each(function() {
 				$(this).removeAttr('checked');
 			});
 			$("#bulk-save-popdiv").hide();
+			$(".saveLink").removeClass("save-link-disabled");
 		}
 	});
 

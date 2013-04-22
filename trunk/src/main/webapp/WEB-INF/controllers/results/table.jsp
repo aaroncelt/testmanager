@@ -82,8 +82,7 @@ var cpDatas = [${cpPieChartData.dataString}];
 		<th>Error Message</th>
 		<th>Error Type</th>
 		<th>Comment</th>
-		<th><input type="checkbox" class="select-all"><span id="saveAllLink" class="saveLink" onclick="saveAll();">SAVE
-				SUGGESTIONS</span> <span id="saveAllLinkHidden" class="saveLinkHidden">SAVING...</span>
+		<th><input type="checkbox" class="select-all"><span id="saveAllLink" class="saveLink" onclick="saveAll();">SAVE SUGGESTIONS</span><span id="saveAllLinkHidden" class="saveLinkHidden">SAVING...</span>
 		</th>
 	</tr>
 	<c:forEach var="test" items="${testRunData}" varStatus="row">
