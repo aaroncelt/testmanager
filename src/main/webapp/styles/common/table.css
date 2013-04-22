@@ -1,98 +1,88 @@
 @CHARSET "UTF-8";
 
 table.main {
-    width: 95%;
-    border: 0;
-    padding: 5px;
-    text-align: center;
-    border-collapse: collapse;
-    border-spacing: 0;
+	width: 95%;
+	border: 0;
+	padding: 5px;
+	text-align: center;
+	border-collapse: collapse;
+	border-spacing: 0;
 }
 
 table.main td {
-    border-top: dotted 1px gray;
-    text-align: center;
-    font-size: small;
+	border-top: dotted 1px gray;
+	text-align: center;
+	font-size: small;
+	word-wrap: break-word;
+	white-space: normal;
 }
 
-table.main tr td:first-child{
-	text-align: left;	
+table.main tr td:first-child {
+	text-align: left;
 }
 
 .commentless {
-    background-color: #E8E8FF;
+	background-color: #E8E8FF;
 }
 
 .suggestion {
-    color: gray;
+	color: gray;
 }
 
 .testName {
-    max-width: 450px;
-    text-align: left;
+	max-width: 450px;
+	text-align: left;
 }
 
 .deleteLink {
-    width: 16px;
-    height: 16px;
-    line-height: 1px;
-    display: block;
-    cursor: pointer;
-    background: url(../../images/trash.png);
+	width: 16px;
+	height: 16px;
+	line-height: 1px;
+	display: block;
+	cursor: pointer;
+	background: url(../../images/trash.png);
 }
 
 .saveLink {
-    cursor: pointer;
-    color: #FD9B11;
+	cursor: pointer;
+	color: #FD9B11;
 }
 
 .link {
-    cursor: pointer;
+	cursor: pointer;
 }
 
 .saveLinkHidden {
-    color: black;
-    display: none;
-}
-
-table.main a,table.main a:link,table.main a:active,table.main a:visited
-    {
-    color: #fd9b11;
-    background: transparent;
-    text-decoration: none;
-    font-style: normal;
-}
-
-table.main a:hover {
-    font-style: italic;;
+	color: black;
+	display: none;
 }
 
 table.main td.sectionHeader {
-    border-top: solid 1px black;
-    text-align: left;
+	border-top: solid 1px black;
+	text-align: left;
 }
 
 table#checkPointTable {
-    width: 100%;
+	width: 100%;
 }
 
 .edit-in-progress {
-    background: white;
+	background: white;
 }
 
 div[contentEditable=true].changed {
-    box-shadow: 0px 0px 5px blue;
-    background: white;
-    color: black;
+	box-shadow: 0px 0px 5px blue;
+	background: white;
+	color: black;
 }
 
 div[contentEditable=true] {
-    width: 95%;
-    height: 30px;
-    border: solid 1px gray;
-    text-align: left;
-    padding-left: 3px;
-    overflow: overlay;
+	width: 95%;
+	height: 30px;
+	border: solid 1px gray;
+	text-align: left;
+	padding-left: 3px;
+	overflow: overlay;
 }
 
 textarea.comment {
