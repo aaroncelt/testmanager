@@ -30,7 +30,8 @@ body {
 }
 
 div#page {
-    min-width: 800px;
+    min-width: 98%;
+    position: absolute;
 }
 
 div#body {
