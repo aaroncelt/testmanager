@@ -15,6 +15,10 @@ table.main td {
     font-size: small;
 }
 
+table.main tr td:first-child{
+	text-align: left;	
+}
+
 .commentless {
     background-color: #E8E8FF;
 }
