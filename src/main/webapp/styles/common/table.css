@@ -21,17 +21,22 @@ table.main tr td:first-child {
 	text-align: left;
 }
 
+table.main td.testName {
+    max-width: 450px;
+    text-align: left;
+}
+
+.testName {
+    max-width: 450px;
+    text-align: left;
+}
+
 .commentless {
 	background-color: #E8E8FF;
 }
 
 .suggestion {
 	color: gray;
-}
-
-.testName {
-	max-width: 450px;
-	text-align: left;
 }
 
 .deleteLink {
