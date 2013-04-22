@@ -27,19 +27,21 @@
             <tiles:getAsString name="title" />
         </title>
 
+        <tiles:useAttribute id="cssItems" name="cssList" classname="java.util.List" ignore="true" />
         <style type="text/css" media="screen">
             @import url("<c:url value="/styles/standard.css" />");
+            <c:forEach items="${cssItems}" var="css">
+                @import url("<c:url value="${css}" />");
+            </c:forEach>
         </style>
 
         <tiles:useAttribute id="jslist" name="javascripts" classname="java.util.List" ignore="true" />
-
         <c:forEach items="${jslist}" var="js">
-            <script type="text/javascript" src="<c:url value="${js}" />" ></script>
+            <script type="text/javascript" src="<c:url value="${js}" />"></script>
         </c:forEach>
-
     </head>
     <body>
-    	<div id="progressbar" class="progressbar"><img src="<c:url value='/images/loader.gif'/>"></img></div>
+        <div id="progressbar" class="progressbar"><img src="<c:url value='/images/loader.gif'/>"></img></div>
         <div id="page" class="center" >
             <div id="header">
                 <tiles:insertAttribute name="header" />

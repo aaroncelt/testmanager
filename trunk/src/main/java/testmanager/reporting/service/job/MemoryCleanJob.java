@@ -65,6 +65,8 @@ public class MemoryCleanJob {
         dataLifecycleManager.removeOldTestRuns(daysToKeepInDatabase);
         // Remove comments without links from the memory and database
         dataLifecycleManager.cleanComments();
+        // Clean Story Table
+        runManager.getStoryTable().cleanStoryTable();
         logger.info("Clean Job STOPPED.");
     }
 

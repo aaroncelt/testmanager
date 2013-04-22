@@ -23,8 +23,8 @@
       <tr>
         <th></th>
         <th><a href="<c:url value="/app/index" />">Index</a></th>
-<!--        <th><a href="<c:url value="/app/tests/list" />">Test List</a></th>-->
         <th><a href="<c:url value="/app/results/index" />">Results</a></th>
+        <th><a href="<c:url value="/app/results/story" />">Stories</a></th>
         <th><a href="<c:url value="/app/admin/index" />">Configuration</a></th>
       </tr>
     </table>

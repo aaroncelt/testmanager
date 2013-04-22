@@ -13,6 +13,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Version number properties -->
         <jstl.version>1.2</jstl.version>
+        <com.google.code.gson.version>2.2.2</com.google.code.gson.version>
         <com.googlecode.json-simple.version>1.1.1</com.googlecode.json-simple.version>
         <net.sourceforge.jexcelapi.version>2.6.12</net.sourceforge.jexcelapi.version>
         <commons-lang.version>2.6</commons-lang.version>
@@ -35,7 +36,12 @@
 		    <artifactId>jstl</artifactId>
 		    <version>${jstl.version}</version>
         </dependency>
-		<dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${com.google.code.gson.version}</version>
+        </dependency>
+		<dependency> <!-- TODO: remove this, GSON is better  -->
 		    <groupId>com.googlecode.json-simple</groupId>
 		    <artifactId>json-simple</artifactId>
 		    <version>${com.googlecode.json-simple.version}</version>

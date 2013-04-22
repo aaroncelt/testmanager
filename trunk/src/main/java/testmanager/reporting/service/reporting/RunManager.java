@@ -33,7 +33,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import testmanager.reporting.dao.TestRunDao;
 import testmanager.reporting.dao.converter.TestRunConverter;
 import testmanager.reporting.dao.dto.TestRunDto;
+import testmanager.reporting.domain.reporting.Pair;
 import testmanager.reporting.domain.reporting.ReportDTO;
+import testmanager.reporting.domain.reporting.StoryTable;
 import testmanager.reporting.domain.reporting.TestRunData;
 import testmanager.reporting.service.linkgeneration.LinkGeneratorFactory;
 import testmanager.reporting.service.naming.TestRunDisplayNameGenerator;
@@ -63,6 +65,8 @@ public class RunManager {
     // <set id, TestSetRunManager>
     private Map<String, SetRunManager> runningSets = new ConcurrentHashMap<String, SetRunManager>();
     private Map<String, SetRunManager> finishedSets = new ConcurrentHashMap<String, SetRunManager>();	// how to determinate if a set is finished? or just don't
+
+    private StoryTable storyTable = new StoryTable();
 
     /**
      * Start test.
@@ -196,7 +200,7 @@ public class RunManager {
      * Load test run data into the operating memory.
      * Note that all of the data fields have to be populated in advance.
      *
-     * @param dataList the data list
+     * @param dtoList the data list
      */
     public void loadTestRunData(List<TestRunDto> dtoList) {
         SetRunManager setRunManager;
@@ -273,6 +277,14 @@ public class RunManager {
             result = true;
         } // else data not found
         return result;
+    }
+
+    public boolean saveStory(ReportDTO dto) {
+        return storyTable.save(dto);
+    }
+
+    public StoryTable getStoryTable() {
+        return storyTable;
     }
 
     Map<String, SetRunManager> getRunningSetsMap() {

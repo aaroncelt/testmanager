@@ -17,26 +17,24 @@
  */
 package testmanager.reporting.web.reporting;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-
+import com.google.gson.Gson;
+import com.google.gson.internal.StringMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
+import org.springframework.web.bind.annotation.*;
 import testmanager.reporting.domain.reporting.ReportDTO;
 import testmanager.reporting.service.reporting.RunManager;
 import testmanager.reporting.util.DateUtil;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Class ReportingController handles the reporting requests. Clients can start and stop a test run here.
@@ -64,13 +62,16 @@ public class ReportingController {
      * @param setStartDate the actual start date of the test set run. This will separate multiple runs of a single set.
      * @param testParams the test parameters - Map<String, String> type JSON string
      * @param env the environment variables - Map<String, String> type JSON string
+     * @param story Story / Issue / Ticket number for which the test was written
+     * @param layer Implementation layer where the test comes from. Eg. web, unit, ...
      * @return string OK on success.
      * @throws ServletException the servlet exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @RequestMapping(value = "start", method = RequestMethod.POST)
     public @ResponseBody String start(@RequestParam String testName, @RequestParam String paramName, @RequestParam String setName, @RequestParam String setStartDate,
-            @RequestParam(required=false) String testParams, @RequestParam(required=false) String env) {
+            @RequestParam(required=false) String testParams, @RequestParam(required=false) String env,
+            @RequestParam(required=false) String story, @RequestParam(required=false) String layer) {
 
         logger.info("Reporting test START: " + testName + " @ " + paramName);
         String response = RESPONSE_BAD;
@@ -105,11 +106,19 @@ public class ReportingController {
             dto.setSetStartDate(setStart);
             dto.setTestparams(testParamsMap);
             dto.setEnv(envMap);
+            dto.setLayer((layer == null || layer.isEmpty()) ? setName : layer);
 
             if (runManager.startTest(dto)) {
                 response = RESPONSE_OK;
             } else {
                 logger.error("Reporting test START was: " + RESPONSE_BAD + " " + dto.toString());
+            }
+
+            for (String str : story.split(" ")) {
+                ReportDTO storyDto = new ReportDTO(dto);
+                storyDto.setStory(str);
+                storyDto.setLayer(dto.getLayer());
+                runManager.saveStory(storyDto);
             }
         }
 
@@ -195,6 +204,29 @@ public class ReportingController {
                 response = RESPONSE_OK;
             } else {
                 logger.error("Reporting test STOP was: " + RESPONSE_BAD + " " + dto.toString());
+            }
+        }
+
+        return response;
+    }
+
+    @RequestMapping(value = "story-bulk", method = RequestMethod.POST)
+    public @ResponseBody String storyBulk(@RequestBody String body) {
+        logger.info("Reporting story bulk upload.");
+        String response = RESPONSE_OK;
+
+        Gson gson = new Gson();
+        Map<String, List<StringMap<String>>> map = gson.fromJson(body, new HashMap<String, List<StringMap<String>>>().getClass());
+
+        ReportDTO dto;
+        for (StringMap<String> element : map.get("story")) {
+            dto = new ReportDTO();
+            dto.setStory(element.get("tag"));
+            dto.setTestName(element.get("testName"));
+            dto.setLayer(element.get("layer"));
+
+            if (!runManager.saveStory(dto)) {
+                logger.error("Reporting test for story: " + RESPONSE_BAD + " " + dto.toString());
             }
         }
 

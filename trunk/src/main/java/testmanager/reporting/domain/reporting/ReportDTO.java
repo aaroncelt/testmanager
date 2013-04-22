@@ -38,6 +38,19 @@ public class ReportDTO {
     private Map<String, String> testparams;
     private List<Map<String, String>> checkPoints;
     private String msg;
+    private String story;
+    private String layer;
+
+    public ReportDTO() {
+    }
+
+    public ReportDTO(ReportDTO copy) {
+        this.testName = copy.getTestName();
+        this.paramName = copy.getParamName();
+        this.setName = copy.getSetName();
+        this.setStartDate = copy.getSetStartDate();
+        this.result = copy.getResult();
+    }
 
     public String getTestName() {
         return testName;
@@ -93,13 +106,25 @@ public class ReportDTO {
     public void setCheckPoints(List<Map<String, String>> checkPoints) {
         this.checkPoints = checkPoints;
     }
+    public String getStory() {
+        return story;
+    }
+    public void setStory(String story) {
+        this.story = story;
+    }
+    public String getLayer() {
+        return layer;
+    }
+    public void setLayer(String layer) {
+        this.layer = layer;
+    }
     @Override
     public String toString() {
         return "ReportDTO [testName=" + testName + ", paramName=" + paramName
                 + ", setName=" + setName + ", setStartDate=" + setStartDate
                 + ", result=" + result + ", env=" + env + ", testparams="
                 + testparams + ", checkPoints=" + checkPoints + ", msg=" + msg
-                + "]";
+                + ", story=" + story + ", layer=" + layer + "]";
     }
 
 }
