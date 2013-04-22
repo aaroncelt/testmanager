@@ -48,6 +48,10 @@ table.main tr td:first-child {
 	color: #FD9B11;
 }
 
+.save-link-disabled{
+	pointer-events: none;
+	color: gray;
+}
 .link {
 	cursor: pointer;
 }
