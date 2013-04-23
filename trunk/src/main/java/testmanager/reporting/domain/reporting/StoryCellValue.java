@@ -9,7 +9,7 @@ import java.util.Date;
  * Date: 22/04/13
  */
 public class StoryCellValue {
-    public static final int DAYS_TO_EXPIRE = 7;
+    public static final int DAYS_TO_EXPIRE = 1;
 
     private String value;
     private Date creationDate = new Date();
