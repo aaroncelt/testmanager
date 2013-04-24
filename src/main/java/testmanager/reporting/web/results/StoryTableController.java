@@ -62,7 +62,6 @@ public class StoryTableController {
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("storyTable", runManager.getStoryTable().getTable());
-        paramMap.put("columns", runManager.getStoryTable().getColumns());
         return new ModelAndView("results/story", paramMap);
     }
 
