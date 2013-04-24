@@ -1,10 +1,6 @@
 package testmanager.reporting.domain.reporting;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
@@ -13,88 +9,64 @@ import java.util.concurrent.ConcurrentSkipListMap;
  */
 public class StoryTable {
 
-    private Map<String, List<StoryCell>> storyTable = new ConcurrentSkipListMap<String, List<StoryCell>>();
-    private Map<String, Integer> columns = new ConcurrentHashMap<String, Integer>();
+    // Story, Layer, Values
+    private Map<String, Map<String, Set<StoryCellValue>>> storyTable = new ConcurrentSkipListMap<String, Map<String, Set<StoryCellValue>>>();
 
     public boolean save(ReportDTO dto) {
-        List<StoryCell> row;
+        Map<String, Set<StoryCellValue>> row;
         if (storyTable.get(dto.getStory()) == null) {
-            storyTable.put(dto.getStory(), new ArrayList<StoryCell>());
+            storyTable.put(dto.getStory(), new TreeMap<String, Set<StoryCellValue>>());
         }
         row = storyTable.get(dto.getStory());
 
-        Integer col;
-        if (!columns.containsKey(dto.getLayer())) {
-            int colNum = columns.keySet().size();
-            // add new column to columns
-            columns.put(dto.getLayer(), new Integer(colNum));
-            // expand existing lists
-            for (List<StoryCell> expandingRow : storyTable.values()) {
-                expandRow(expandingRow);
-            }
+        Set<StoryCellValue> cells;
+        if (row.get(dto.getLayer()) == null) {
+            row.put(dto.getLayer(), new HashSet<StoryCellValue>());
         }
-        col = columns.get(dto.getLayer());
+        cells = row.get(dto.getLayer());
 
-        addElement(row, col, dto.getTestName());
-
+        cells.add(new StoryCellValue(dto.getTestName()));
         return true;
     }
 
-    private void addElement(List<StoryCell> list, int index, String value) {
-        expandRow(list);
-        list.get(index).addValue(value);
-    }
-
-    private void expandRow(List<StoryCell> list) {
-        while (list.size() < columns.keySet().size()) {
-            list.add(new StoryCell());
-        }
-    }
-
-    public Map<String, List<StoryCell>> getTable() {
+    public Map<String, Map<String, Set<StoryCellValue>>> getTable() {
         return storyTable;
-    }
-
-    public List<String> getColumns() {
-        List<String> result = new ArrayList<String>();
-        for (Map.Entry<String, Integer> e : columns.entrySet()) {
-            if (e.getValue() >= result.size()) {
-                result.add(e.getKey());
-            } else {
-                result.add(e.getValue(), e.getKey());
-            }
-        }
-        return result;
     }
 
     public void cleanStoryTable() {
         synchronized (storyTable) {
-            // remove expired values
-            for (List<StoryCell> list : storyTable.values()) {
-                for (StoryCell cell : list) {
-                    Iterator<StoryCellValue> iterator = cell.getValues().iterator();
-                    while (iterator.hasNext()) {
-                        if (iterator.next().isExpired()) {
-                            iterator.remove();
-                        }
+            for (Map<String, Set<StoryCellValue>> map : storyTable.values()) {
+                Iterator<String> iterator = map.keySet().iterator();
+                while (iterator.hasNext()) {
+                    String key = iterator.next();
+                    if (isCellSetEmpty(map.get(key))) {
+                        iterator.remove();
                     }
                 }
             }
-            // remove empty stories
-            Iterator<Map.Entry<String, List<StoryCell>>> iterator = storyTable.entrySet().iterator();
+
+            Iterator<String> iterator = storyTable.keySet().iterator();
             while (iterator.hasNext()) {
-                Map.Entry<String, List<StoryCell>> e = iterator.next();
-                boolean rowEmpty = true;
-                for (StoryCell cell : e.getValue()) {
-                    if (!cell.getValues().isEmpty()) {
-                        rowEmpty = false;
-                    }
-                }
-                if (rowEmpty) {
-                    storyTable.remove(e.getKey());
+                String key = iterator.next();
+                if (storyTable.get(key).isEmpty()) {
+                    iterator.remove();
                 }
             }
         }
+    }
+
+    private boolean isCellSetEmpty(Set<StoryCellValue> set) {
+        boolean result = true;
+        Iterator<StoryCellValue> iterator = set.iterator();
+        while (iterator.hasNext()) {
+            StoryCellValue cell = iterator.next();
+            if (!cell.isExpired()) {
+                result = false;
+            } else {
+                iterator.remove();
+            }
+        }
+        return result;
     }
 
 }

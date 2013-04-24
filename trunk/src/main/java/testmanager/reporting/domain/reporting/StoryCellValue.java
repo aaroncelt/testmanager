@@ -20,13 +20,13 @@ public class StoryCellValue {
     }
 
     public String getValue() {
-        if (creationDate.before(DateUtil.getDateBeforeDays(DAYS_TO_EXPIRE))) {
-            if (!"".equals(value)) { expired = true; }
-        }
         return value;
     }
 
     public boolean isExpired() {
+        if (!expired && creationDate.before(DateUtil.getDateBeforeDays(DAYS_TO_EXPIRE))) {
+            expired = true;
+        }
         return expired;
     }
 

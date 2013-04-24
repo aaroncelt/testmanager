@@ -26,24 +26,32 @@
         <th>
             <a href="clean-stories">Clean Stories</a>
         </th>
-        <c:forEach var="val" items="${columns}">
         <th>
-            <c:out value="${val}"/>
+            Layer
         </th>
-        </c:forEach>
+        <th>
+            Tests
+        </th>
     </tr>
-	<c:forEach var="entry" items="${storyTable}">
+	<c:forEach var="storyentry" items="${storyTable}">
+    <c:set var="firstRow" value="${true}" />
+    <c:forEach var="layerentry" items="${storyentry.value}">
     <tr>
-        <td class="testName">
-            <c:out value="${entry.key}"/>
+        <c:if test="${firstRow}">
+        <c:set var="firstRow" value="${false}" />
+        <td class="testName" rowspan="${storyentry.value.keySet().size()}">
+            <c:out value="${storyentry.key}"/>
         </td>
-        <c:forEach var="cell" items="${entry.value}">
+        </c:if>
         <td class="testName">
-            <c:forEach var="cellValue" items="${cell.getValues()}">
-            <c:out value="${cellValue.getValue()}"/><c:if test="${cellValue.isExpired()}"> EXPIRED</c:if><br/>
+            <c:out value="${layerentry.key}"/>
+        </td>
+        <td class="testName">
+            <c:forEach var="setValue" items="${layerentry.value}">
+            <c:out value="${setValue.getValue()}"/><c:if test="${setValue.isExpired()}"> EXPIRED</c:if><br/>
             </c:forEach>
         </td>
-        </c:forEach>
     </tr>
+    </c:forEach>
 	</c:forEach>
 </table>
