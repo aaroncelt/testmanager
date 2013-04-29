@@ -21,7 +21,7 @@ public class StoryTable {
 
         Set<StoryCellValue> cells;
         if (row.get(dto.getLayer()) == null) {
-            row.put(dto.getLayer(), new HashSet<StoryCellValue>());
+            row.put(dto.getLayer(), new TreeSet<StoryCellValue>());
         }
         cells = row.get(dto.getLayer());
 
