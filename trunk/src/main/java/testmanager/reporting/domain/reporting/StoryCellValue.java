@@ -8,7 +8,7 @@ import java.util.Date;
  * User: Istvan Pamer
  * Date: 22/04/13
  */
-public class StoryCellValue {
+public class StoryCellValue implements Comparable<StoryCellValue> {
     public static final int DAYS_TO_EXPIRE = 1;
 
     private String value;
@@ -45,5 +45,10 @@ public class StoryCellValue {
     @Override
     public int hashCode() {
         return value != null ? value.hashCode() : 0;
+    }
+
+    @Override
+    public int compareTo(StoryCellValue o) {
+        return value.compareTo(o.getValue());
     }
 }
