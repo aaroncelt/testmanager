@@ -86,6 +86,7 @@ table.main tr td:nth-child(2) {
 .paramName {
     word-wrap: normal !important;
     width: 50px;
+    border-left: double;
 }
 .highlighted {
     /*border-left: solid 2px gray;
@@ -98,6 +99,14 @@ table.main thead td{
 }
 body{
     margin: 0px;
+}
+
+.hidden-phases .phases{
+    display: none;
+}
+
+.visible-phases .phases{
+    display: table-cell;
 }
 </style>
 <script type="text/javascript">
@@ -115,7 +124,14 @@ function filter(term){
     		$(this).show();
     	};
     });
-    
+}
+
+function showHidePhases(){
+	if ($('.hidden-phases').length > 0){
+		$('.hidden-phases').removeClass('hidden-phases').addClass('visible-phases');
+	} else {
+		$('.visible-phases').removeClass('visible-phases').addClass('hidden-phases');
+	}
 }
 
 $(document).ready(function() {
@@ -144,13 +160,16 @@ $(document).ready(function() {
 			pattern="yyyy/MM/dd HH:mm" />
 	</h3>
 </div>
-<table class="main" id="main">
+<table class="main hidden-phases" id="main">
     <thead>
     	<tr>
-    		<td class="testName">Test Name</td>
-    		<td class="rotate paramName"><div>Parameter Name</div></td>
+    		<td class="testName">Test Name <small><a onclick="showHidePhases();">Show/Hide Phases</a></small></td>
+            <c:forEach var="checkpointGroup" items="${checkpointGroups}">
+                <td class="cp-group rotate"><div>${checkpointGroup}</div></td>
+            </c:forEach>
+    		<td class="rotate paramName phases"><div>Parameter Name</div></td>
             <c:forEach var="phase" items="${phases}">
-                <td class="cp-group rotate"><div>${phase}</div></td>
+                <td class="phases rotate"><div>${phase}</div></td>
             </c:forEach>
     	</tr>
         <tr>
@@ -166,10 +185,14 @@ $(document).ready(function() {
                 <td><span class="scenario-name <%=getResultClass(pageContext.getAttribute("scenarioState")) %>">${scenarioResult.key } - ${scenarioResultStateMap[scenarioResult.key]}</span>
                     <div class="labels">${scenarioResult.value.values().toArray()[0].labels}</div>
                 </td>
-                <td class="paramName">${scenarioResult.value.values().toArray()[0].paramName}</td>
+                <c:forEach var="checkpointGroup" items="${checkpointGroups}" varStatus="status">
+                    <c:set var="cpGroupResult" value="${scenarioCpPrioResultMap[scenarioResult.key][status.index]}"></c:set>
+                    <td class="cp-group <%=getResultClass(pageContext.getAttribute("cpGroupResult"))%>">&nbsp;</td>
+                </c:forEach>
+                <td class="paramName phases">${scenarioResult.value.values().toArray()[0].paramName}</td>
                 <c:forEach var="phase" items="${phases}">
                     <c:set var="phaseResult" value="${scenarioResult.value[phase].state }"></c:set>
-                    <td class="cp-group <%=getResultClass(pageContext.getAttribute("phaseResult"))%>">
+                    <td class="phases <%=getResultClass(pageContext.getAttribute("phaseResult"))%>">
                         <c:if test="${not empty scenarioResult.value[phase]}"><a href="${scenarioResult.value[phase].linkToResult}" target="_blank">&raquo;</a></c:if>
                     </td>
                 </c:forEach>            

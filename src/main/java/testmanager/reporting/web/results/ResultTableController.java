@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
@@ -70,6 +72,7 @@ public class ResultTableController {
 	private static final String RESPONSE_OK = "OK";
 	private static final String RESPONSE_BAD = "BAD";
 	private Pattern scenarioGroupPattern;
+	private List<String> checkpointGroups;
 	@Autowired
 	private RunManager runManager;
 	@Autowired
@@ -83,13 +86,7 @@ public class ResultTableController {
 			return s1.compareTo(s2);
 		}
 	};
-	// private static final Comparator<TestRunData> TEST_RUN_NAME_ORDER_DESC =
-	// new Comparator<TestRunData>() {
-	// @Override
-	// public int compare(TestRunData o1, TestRunData o2) {
-	// return o2.getTestName().compareTo(o1.getTestName());
-	// };
-	// };
+
 	private static final Comparator<TestRunData> TEST_RUN_ERROR_ORDER_ASC = new Comparator<TestRunData>() {
 		@Override
 		public int compare(TestRunData o1, TestRunData o2) {
@@ -180,9 +177,9 @@ public class ResultTableController {
 		return new ModelAndView("results/table", map);
 	}
 
-	@RequestMapping(value = "table_cpb", method = RequestMethod.GET)
+	@RequestMapping(value = "table_scenario", method = RequestMethod.GET)
 	public ModelAndView table_cpb(@RequestParam String setId) {
-		logger.info("OPEN results/table_cpb {setId=" + setId + "}");
+		logger.info("OPEN results/table_scenario {setId=" + setId + "}");
 
 		List<TestRunData> list = runManager.getAllTestRunData(setId);
 		SetRunManager setRunManager = runManager.getSetRunManager(setId);
@@ -204,6 +201,7 @@ public class ResultTableController {
 		}
 
 		Map<String, Map<String, TestRunData>> scenarioResultMap = new TreeMap<String, Map<String, TestRunData>>();
+		Map<String, List<ResultState>> scenarioCpPrioResultMap = new TreeMap<String, List<ResultState>>();
 		Set<String> allPhases = new HashSet<String>();
 		for (TestRunData testRunData : list) {
 			Matcher matcher = scenarioGroupPattern.matcher(testRunData.getDisplayTestName());
@@ -212,9 +210,12 @@ public class ResultTableController {
 				String phaseKey = matcher.group(2);
 				if (!scenarioResultMap.containsKey(scenarioKey)) {
 					scenarioResultMap.put(scenarioKey, new TreeMap<String, TestRunData>());
+					scenarioCpPrioResultMap.put(scenarioKey, new ArrayList<ResultState>(Arrays.asList(new ResultState[checkpointGroups.size()])));
 				}
 
 				scenarioResultMap.get(scenarioKey).put(phaseKey, testRunData);
+				scenarioCpPrioResultMap.put(scenarioKey, updateCpGourpResult(scenarioCpPrioResultMap.get(scenarioKey), testRunData));
+
 				allPhases.add(phaseKey);
 			}
 		}
@@ -235,13 +236,43 @@ public class ResultTableController {
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("scenarioResultMap", scenarioResultMap);
+		map.put("scenarioCpPrioResultMap", scenarioCpPrioResultMap);
+		map.put("checkpointGroups", checkpointGroups);
 		map.put("scenarioResultStateMap", scenarioResultStateMap);
 		map.put("phases", asList);
 
 		map.put("setId", setId);
 		map.put("setRunManager", setRunManager);
 
-		return new ModelAndView("results/table_cpb", map);
+		return new ModelAndView("results/table_scenario", map);
+	}
+
+	private List<ResultState> updateCpGourpResult(List<ResultState> list, TestRunData testRunData) {
+		List<ResultState> retval = new ArrayList<ResultState>(list);
+		for (int i = 0; i < checkpointGroups.size(); i++) {
+			String cpGroupName = checkpointGroups.get(i);
+			ResultState groupResultState = list.get(i);
+			if (groupResultState != null && groupResultState != ResultState.PASSED) {
+				continue;
+			}
+			for (CheckPoint cp : testRunData.getCheckPoints()) {
+				if (isCpHasGroup(cpGroupName, cp)) {
+					if (groupResultState == null) {
+						groupResultState = cp.getState();
+						retval.set(i, groupResultState);
+					} else if (cp.getState() != ResultState.PASSED) {
+						groupResultState = cp.getState();
+						retval.set(i, groupResultState);
+						break;
+					}
+				}
+			}
+		}
+		return retval;
+	}
+
+	private boolean isCpHasGroup(String cpGroupName, CheckPoint cp) {
+		return cpGroupName.equals(cp.getMainType()) || Arrays.asList(cp.getSubType().split(" ")).contains(cpGroupName);
 	}
 
 	/**
@@ -356,6 +387,15 @@ public class ResultTableController {
 	@Value("${screnario.group.pattern}")
 	public void setScenarioGroupPattern(String scenarioGroupPattern) {
 		this.scenarioGroupPattern = Pattern.compile(scenarioGroupPattern);
+	}
+
+	@Value("${scenario.checkpoint.groups}")
+	public void setCheckpointGroups(String checkpointGroups) {
+		if (StringUtils.isNotBlank(checkpointGroups)) {
+			this.checkpointGroups = Arrays.asList(checkpointGroups.split(","));
+		} else {
+			this.checkpointGroups = new ArrayList<String>();
+		}
 	}
 
 	public class AlphanumComparator implements Comparator<String> {
