@@ -20,12 +20,15 @@ package testmanager.reporting.web.results;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.http.HttpServletResponse;
@@ -70,7 +73,9 @@ public class ResultTableController {
 	private static final Comparator<TestRunData> TEST_RUN_NAME_ORDER_ASC = new Comparator<TestRunData>() {
 		@Override
 		public int compare(TestRunData o1, TestRunData o2) {
-			return o1.getTestName().compareTo(o2.getTestName());
+			String s1 = o1.getTestName() + o1.getParamName();
+			String s2 = o2.getTestName() + o2.getParamName();
+			return s1.compareTo(s2);
 		}
 	};
 	// private static final Comparator<TestRunData> TEST_RUN_NAME_ORDER_DESC =
@@ -169,6 +174,79 @@ public class ResultTableController {
 		map.put("failedCP", failedCP);
 
 		return new ModelAndView("results/table", map);
+	}
+
+	@RequestMapping(value = "table_cpb", method = RequestMethod.GET)
+	public ModelAndView table_cpb(@RequestParam String setId) {
+		logger.info("OPEN results/table_cpb {setId=" + setId + "}");
+
+		List<TestRunData> list = runManager.getAllTestRunData(setId);
+		SetRunManager setRunManager = runManager.getSetRunManager(setId);
+		// Collect Pie Chart Data
+		Integer passedCP = 0, failedCP = 0;
+		for (TestRunData testRunData : list) {
+			for (CheckPoint cp : testRunData.getCheckPoints()) {
+				switch (cp.getState()) {
+				case PASSED:
+					passedCP++;
+					break;
+				case FAILED:
+					failedCP++;
+					break;
+				default:
+					break;
+				}
+			}
+		}
+
+		Set<String> allCpGourps = new HashSet<String>();
+		for (TestRunData testRunData : list) {
+			for (CheckPoint checkPoint : testRunData.getCheckPoints()) {
+				allCpGourps.add(checkPoint.getMainType());
+			}
+		}
+		Map<TestRunData, Map<String, ResultState>> checkpointBasedResult = new HashMap<TestRunData, Map<String, ResultState>>();
+		for (TestRunData testRunData : list) {
+			Map<String, ResultState> cpGroupResult = new HashMap<String, ResultState>();
+			Boolean tcFinished = false;
+			for (CheckPoint checkpoint : testRunData.getCheckPoints()) {
+				if ("TC Finished".equals(checkpoint.getMessage())) {
+					tcFinished = true;
+				}
+
+				String key = checkpoint.getMainType();
+				if (!cpGroupResult.containsKey(key)) {
+					cpGroupResult.put(key, ResultState.PASSED);
+				}
+
+				ResultState value = cpGroupResult.get(key);
+				if (value == ResultState.FAILED || checkpoint.getState() != ResultState.PASSED) {
+					value = ResultState.FAILED;
+				}
+				cpGroupResult.put(key, value);
+
+			}
+			if (!tcFinished) {
+				for (String cpGroup : allCpGourps) {
+					cpGroupResult.put(cpGroup, ResultState.NOT_AVAILABLE);
+				}
+			}
+			checkpointBasedResult.put(testRunData, cpGroupResult);
+
+		}
+		List<String> asList = new ArrayList<String>(allCpGourps);
+		Collections.sort(asList);
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("testRunData", checkpointBasedResult);
+		map.put("allCpGroups", asList);
+		map.put("errorTypes", runManager.getErrorTypes());
+		map.put("setId", setId);
+		map.put("setRunManager", setRunManager);
+		map.put("passedCP", passedCP);
+		map.put("failedCP", failedCP);
+
+		return new ModelAndView("results/table_cpb", map);
 	}
 
 	/**
