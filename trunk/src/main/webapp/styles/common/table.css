@@ -19,16 +19,17 @@ table.main td {
 
 table.main tr td:first-child {
 	text-align: left;
+	white-space: nowrap;
 }
 
 table.main td.testName {
-    max-width: 450px;
-    text-align: left;
+	max-width: 450px;
+	text-align: left;
 }
 
 .testName {
-    max-width: 450px;
-    text-align: left;
+	max-width: 450px;
+	text-align: left;
 }
 
 .commentless {
@@ -53,10 +54,11 @@ table.main td.testName {
 	color: #FD9B11;
 }
 
-.save-link-disabled{
+.save-link-disabled {
 	pointer-events: none;
 	color: gray;
 }
+
 .link {
 	cursor: pointer;
 }
@@ -69,6 +71,18 @@ table.main td.testName {
 table.main td.sectionHeader {
 	border-top: solid 1px black;
 	text-align: left;
+}
+
+table.main th{
+	white-space: nowrap;
+	text-align: left;
+	padding: 3px;
+	border-right: dotted 1px gray;
+	border-top: dotted 1px gray;
+}
+
+table.main th.cp-group{
+	font-size: smaller;
 }
 
 table#checkPointTable {

@@ -45,7 +45,9 @@ var cpDatas = [${cpPieChartData.dataString}];
 			${setRunManager.setName} -
 			<fmt:formatDate value="${setRunManager.startDate}"
 				pattern="yyyy/MM/dd HH:mm" />
+            - <a href="table_cpb?setId=${setId}">Checkpoint groups</a>
 			- <a href="generate_xls?setId=${setId}">Generate XLS</a>
+            
 		</h3>
         <div id="tools">
 	       	<div>

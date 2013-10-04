@@ -32,7 +32,7 @@
             <add-attribute value="/js/results/index.js" />
         </put-list-attribute>
     </definition>
-
+    
     <definition name="results/checkpoints" extends="standard-layout">
         <put-attribute name="title" value="CheckPoints" />
     </definition>
@@ -48,6 +48,16 @@
             <add-attribute value="/js/highcharts.testmanager.js" />
             <add-attribute value="/js/results/table.js" />
             <add-attribute value="/js/results/table/search_module.js" />
+        </put-list-attribute>
+    </definition>
+    
+        <definition name="results/table_cpb" extends="standard-layout">
+        <put-attribute name="title" value="Result Table" />
+        <put-attribute name="body" value="/WEB-INF/controllers/results/table_cpb.jsp" />
+        <put-list-attribute name="javascripts">
+            <add-attribute value="/js/jquery.min.js" />
+            <add-attribute value="/js/jquery-ui.min.js" />
+            <add-attribute value="/js/jquery.cookie.js" />
         </put-list-attribute>
     </definition>
 
