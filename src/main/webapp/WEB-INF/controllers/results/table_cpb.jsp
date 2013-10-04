@@ -38,7 +38,8 @@ table.main tr:hover{
     border-bottom: solid 2px gray;
     padding-bottom: -1px;
 }
-table.main tr td:first-child {
+table.main tr td:nth-child(2) {
+    word-wrap: normal;
     white-space: normal !important;
 }
 .cp-group{
@@ -108,9 +109,85 @@ table.main tr td:first-child {
     border-right: solid 2px gray;
     padding-right: 2px;
 }
+.collapse{
+    width: 20px;
+}
+body{
+    margin: 0px;
+}
+.modal-div{
+    display:none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(14, 13, 13, 0.78);
+    z-index: 1000;
+}
+
+.modal-div>div{
+    width: 80%;
+    margin: auto;
+}
+.modal-div .header{
+    background-color: lightgray;
+    border-radius: 5px 5px 0px 0px; 
+    margin-top: 30px;
+}
+.modal-div .body{
+    background-color: green;
+    max-height: 90%;
+    max-width: 100%;
+    margin-top: 3px;
+    overflow: auto;
+}
+
+.modal-div .header h3{
+    padding-top: 5px;
+    padding-bottom: 3px;
+    text-align: center;
+    margin: 0px;
+}
 </style>
 <script type="text/javascript">
+var setId = '${setId}';
+function createModalDiv(){
+	var backgroundDiv = $('<div class="modal-div">');
+	backgroundDiv.append($('<div class="header"><h3>Checkpoint results</h3></div'));
+	backgroundDiv.append($('<div class="body">'));
+	$('body').prepend(backgroundDiv);
+    $('.modal-div').click(function() {
+		$(this).hide();
+	});
+    $('.modal-div .header,.modal-div .body').click(function(e){
+    	   e.stopPropagation();
+    	});
+    $('body').keydown(function(e) {
+        // ESCAPE key pressed
+        if (e.keyCode == 27) {
+        	$('.modal-div').hide();
+        }
+    });
+}
 $(document).ready(function() {
+	createModalDiv();
+	$('img').each(function() {
+        var testName = $(this).attr('testname');
+        var paramName = $(this).attr('paramname');
+        $(this).click(function() {
+            $('#progressbar').show();
+            $.get("checkpoints", {
+                setId : setId,
+                testName : testName,
+                paramName : paramName
+            }, function(data) {
+                $('.modal-div .body').html(data);
+                $('#progressbar').hide();
+                $('.modal-div').show();
+            });
+        });
+
+    });
+	
     $('td.cp-group').hover(function() {
         var t = parseInt($(this).index()) + 1;
         $('td:nth-child(' + t + ')').addClass('highlighted');
@@ -155,25 +232,38 @@ $(document).ready(function() {
                     <c:set var="failedCp" value="${failedCp + 1}" />
                  </c:if>
             </c:forEach>
+            <td class="collapse">
+                <c:if test="${!empty test.key.checkPoints}">
+                    <img src="<c:url value='/images/plus.png'/>" class="link" testname="<c:out value='${test.key.testName}'/>" paramname='${test.key.paramName}' index='${row.index}' />
+                </c:if></td>
 			<td class="testName" data-test-name="${test.key.testName }">
+            <c:set var="stateClass" value="" />
             <c:choose>
                 <c:when test="${test.key.state == 'STARTED'}">
-                    <span class='result-point started'>In progress</span>
+                    <c:set var="stateClass" value="started" />
                 </c:when>
                 <c:when test="${test.key.state == 'PASSED'}">
-                    <span class='result-point passed'>Passed</span>
+                    <c:set var="stateClass" value="passed" />
                 </c:when>
                 <c:when test="${test.key.state == 'FAILED'}">
-                    <span class='result-point failed'>Failed</span>
+                    <c:set var="stateClass" value="failed" />
                 </c:when>
                 <c:when test="${test.key.state == 'NOT_AVAILABLE'}">
-                    <span class='result-point notavailable'>NA</span>
+                    <c:set var="stateClass" value="notavailable" />
                 </c:when>
                 <c:when test="${test.key.state == 'ABORTED'}">
-                    <span class='result-point aborted'>Aborted</span>
+                    <c:set var="stateClass" value="aborted" />
+                </c:when>
+            </c:choose>
+            <c:choose>
+                <c:when test="${test.key.state == 'PASSED'}">
+                    <span class='result-point ${stateClass}'>Passed</span>
+                </c:when>
+                <c:when test="${test.key.errorComment == nul}">
+                    <span class='result-point ${stateClass}'>Unknown</span>
                 </c:when>
                 <c:otherwise>
-                    <span class="result-point"></span>
+                    <span class='result-point ${stateClass}' title='${test.key.errorComment}'>${test.key.errorType }</span>
                 </c:otherwise>
             </c:choose>
             <a href="${test.key.linkToResult}"
