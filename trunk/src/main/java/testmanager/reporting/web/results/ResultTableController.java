@@ -31,6 +31,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,6 +40,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -66,6 +69,7 @@ public class ResultTableController {
 
 	private static final String RESPONSE_OK = "OK";
 	private static final String RESPONSE_BAD = "BAD";
+	private Pattern scenarioGroupPattern;
 	@Autowired
 	private RunManager runManager;
 	@Autowired
@@ -122,8 +126,7 @@ public class ResultTableController {
 	/**
 	 * Controller for handling the test run data view.
 	 * 
-	 * @param setId
-	 *            the set id
+	 * @param setId the set id
 	 * @return the model and view
 	 */
 	@RequestMapping(value = "table", method = RequestMethod.GET)
@@ -200,62 +203,43 @@ public class ResultTableController {
 			}
 		}
 
-		Set<String> allCpGourps = new HashSet<String>();
+		Map<String, Map<String, TestRunData>> scenarioResultMap = new TreeMap<String, Map<String, TestRunData>>();
+		Set<String> allPhases = new HashSet<String>();
 		for (TestRunData testRunData : list) {
-			for (CheckPoint checkPoint : testRunData.getCheckPoints()) {
-				allCpGourps.add(checkPoint.getMainType());
+			Matcher matcher = scenarioGroupPattern.matcher(testRunData.getDisplayTestName());
+			if (matcher.matches()) {
+				String scenarioKey = matcher.group(1);
+				String phaseKey = matcher.group(2);
+				if (!scenarioResultMap.containsKey(scenarioKey)) {
+					scenarioResultMap.put(scenarioKey, new TreeMap<String, TestRunData>());
+				}
+
+				scenarioResultMap.get(scenarioKey).put(phaseKey, testRunData);
+				allPhases.add(phaseKey);
 			}
 		}
-		Map<TestRunData, Map<String, ResultState>> checkpointBasedResult = new TreeMap<TestRunData, Map<String, ResultState>>(
-				new Comparator<TestRunData>() {
-					@Override
-					public int compare(TestRunData o1, TestRunData o2) {
-						if (o1 != null && o2 != null) {
-							return o1.getDisplayTestName().compareTo(o2.getDisplayTestName());
-						} else {
-							return 0;
-						}
-					}
-				});
-		for (TestRunData testRunData : list) {
-			Map<String, ResultState> cpGroupResult = new HashMap<String, ResultState>();
-			Boolean tcFinished = false;
-			for (CheckPoint checkpoint : testRunData.getCheckPoints()) {
-				if ("TC Finished".equals(checkpoint.getMessage())) {
-					tcFinished = true;
-				}
+		Map<String, ResultState> scenarioResultStateMap = new TreeMap<String, ResultState>();
 
-				String key = checkpoint.getMainType();
-				if (!cpGroupResult.containsKey(key)) {
-					cpGroupResult.put(key, ResultState.PASSED);
-				}
-
-				ResultState value = cpGroupResult.get(key);
-				if (value == ResultState.FAILED || checkpoint.getState() != ResultState.PASSED) {
-					value = ResultState.FAILED;
-				}
-				cpGroupResult.put(key, value);
-
-			}
-			if (!tcFinished) {
-				for (String cpGroup : allCpGourps) {
-					cpGroupResult.put(cpGroup, ResultState.NOT_AVAILABLE);
+		for (Entry<String, Map<String, TestRunData>> scenario : scenarioResultMap.entrySet()) {
+			ResultState result = ResultState.PASSED;
+			for (Entry<String, TestRunData> phase : scenario.getValue().entrySet()) {
+				if (result == ResultState.PASSED) {
+					result = phase.getValue().getState();
 				}
 			}
-			checkpointBasedResult.put(testRunData, cpGroupResult);
-
+			scenarioResultStateMap.put(scenario.getKey(), result);
 		}
-		List<String> asList = new ArrayList<String>(allCpGourps);
-		Collections.sort(asList);
+
+		List<String> asList = new ArrayList<String>(allPhases);
+		Collections.sort(asList, new AlphanumComparator());
 
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("testRunData", checkpointBasedResult);
-		map.put("allCpGroups", asList);
-		map.put("errorTypes", runManager.getErrorTypes());
+		map.put("scenarioResultMap", scenarioResultMap);
+		map.put("scenarioResultStateMap", scenarioResultStateMap);
+		map.put("phases", asList);
+
 		map.put("setId", setId);
 		map.put("setRunManager", setRunManager);
-		map.put("passedCP", passedCP);
-		map.put("failedCP", failedCP);
 
 		return new ModelAndView("results/table_cpb", map);
 	}
@@ -263,16 +247,11 @@ public class ResultTableController {
 	/**
 	 * Controller for saving the comments on test runs.
 	 * 
-	 * @param setId
-	 *            the set id
-	 * @param testName
-	 *            the test name
-	 * @param paramName
-	 *            the param name
-	 * @param type
-	 *            the type
-	 * @param comment
-	 *            the comment
+	 * @param setId the set id
+	 * @param testName the test name
+	 * @param paramName the param name
+	 * @param type the type
+	 * @param comment the comment
 	 * @return the model and view
 	 */
 	@RequestMapping(value = "save", method = RequestMethod.GET)
@@ -291,8 +270,7 @@ public class ResultTableController {
 	/**
 	 * Save all suggested comments for a set run.
 	 * 
-	 * @param setId
-	 *            the set id
+	 * @param setId the set id
 	 * @return the string
 	 */
 	@RequestMapping(value = "save_all", method = RequestMethod.GET)
@@ -373,5 +351,85 @@ public class ResultTableController {
 			break;
 		}
 		return retval;
+	}
+
+	@Value("${screnario.group.pattern}")
+	public void setScenarioGroupPattern(String scenarioGroupPattern) {
+		this.scenarioGroupPattern = Pattern.compile(scenarioGroupPattern);
+	}
+
+	public class AlphanumComparator implements Comparator<String> {
+		private final boolean isDigit(char ch) {
+			return ch >= 48 && ch <= 57;
+		}
+
+		/**
+		 * Length of string is passed in for improved efficiency (only need to
+		 * calculate it once)
+		 **/
+		private final String getChunk(String s, int slength, int marker) {
+			StringBuilder chunk = new StringBuilder();
+			char c = s.charAt(marker);
+			chunk.append(c);
+			marker++;
+			if (isDigit(c)) {
+				while (marker < slength) {
+					c = s.charAt(marker);
+					if (!isDigit(c))
+						break;
+					chunk.append(c);
+					marker++;
+				}
+			} else {
+				while (marker < slength) {
+					c = s.charAt(marker);
+					if (isDigit(c))
+						break;
+					chunk.append(c);
+					marker++;
+				}
+			}
+			return chunk.toString();
+		}
+
+		public int compare(String o1, String o2) {
+			int thisMarker = 0;
+			int thatMarker = 0;
+			int s1Length = o1.length();
+			int s2Length = o2.length();
+
+			while (thisMarker < s1Length && thatMarker < s2Length) {
+				String thisChunk = getChunk(o1, s1Length, thisMarker);
+				thisMarker += thisChunk.length();
+
+				String thatChunk = getChunk(o2, s2Length, thatMarker);
+				thatMarker += thatChunk.length();
+
+				// If both chunks contain numeric characters, sort them
+				// numerically
+				int result = 0;
+				if (isDigit(thisChunk.charAt(0)) && isDigit(thatChunk.charAt(0))) {
+					// Simple chunk comparison by length.
+					int thisChunkLength = thisChunk.length();
+					result = thisChunkLength - thatChunk.length();
+					// If equal, the first different number counts
+					if (result == 0) {
+						for (int i = 0; i < thisChunkLength; i++) {
+							result = thisChunk.charAt(i) - thatChunk.charAt(i);
+							if (result != 0) {
+								return result;
+							}
+						}
+					}
+				} else {
+					result = thisChunk.compareTo(thatChunk);
+				}
+
+				if (result != 0)
+					return result;
+			}
+
+			return s1Length - s2Length;
+		}
 	}
 }

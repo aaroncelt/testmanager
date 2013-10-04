@@ -6,6 +6,7 @@
 <div id="search-in">
     <span data-column=-1>All</span>
     <span data-column=1>Test Name</span>
+    <span data-column=1>Labels</span>
     <span data-column=2>Parameter Name</span>
     <span data-column=5>State</span>
     <span data-column=6>Error Message</span>

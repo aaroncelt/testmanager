@@ -113,3 +113,9 @@ textarea.comment {
 	height: 100%;
 	min-width: 200px;
 }
+
+div.labels {
+	font-size: x-small;
+	display: none;
+	white-space: normal;
+}
