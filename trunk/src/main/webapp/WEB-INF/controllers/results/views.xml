@@ -48,6 +48,7 @@
             <add-attribute value="/js/highcharts.testmanager.js" />
             <add-attribute value="/js/results/table.js" />
             <add-attribute value="/js/results/table/search_module.js" />
+            <add-attribute value="/js/move_title.js" />
         </put-list-attribute>
     </definition>
     
@@ -58,6 +59,7 @@
             <add-attribute value="/js/jquery.min.js" />
             <add-attribute value="/js/jquery-ui.min.js" />
             <add-attribute value="/js/jquery.cookie.js" />
+            <add-attribute value="/js/move_title.js" />
         </put-list-attribute>
     </definition>
 

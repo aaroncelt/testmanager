@@ -118,10 +118,19 @@ function showAllRows(){
 
 function filter(term){
     $('table.main tbody tr').each(function(){
-    	if ($(this).find("td:first").text().toLowerCase().indexOf(term.toLowerCase())===-1){
-    		  $(this).hide();
+    	var terms = term.toLowerCase().split(",");
+    	var currentItem = $(this).find("td:first").text().toLowerCase();
+    	var matched = true;
+    	
+    	for (var i=0; i<terms.length;i++){
+    		if(currentItem.indexOf(terms[i])===-1){
+    			matched = false;
+    		}
+    	}
+    	if (matched){
+    	   $(this).show();
     	} else {
-    		$(this).show();
+    	   $(this).hide();
     	};
     });
 }
@@ -154,24 +163,6 @@ $(document).ready(function() {
 });
 
 document.title="${setRunManager.setName}";
-var msg  = document.title;
-var speed = 150;
-var endChar = " ";
-var pos = 0;
- 
-function moveTitle()
-{
-  var ml = msg.length;
-       
-  title = msg.substr(pos,ml) + endChar + msg.substr(0,pos);
-  document.title = title;
-   
-  pos++;
-  if (pos > ml) pos=0;
-  window.setTimeout("moveTitle()",speed);
-}
-
-moveTitle();
 </script>
 <div class="headingDiv">
 	<h3>
