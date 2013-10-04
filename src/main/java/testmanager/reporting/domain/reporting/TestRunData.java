@@ -54,6 +54,7 @@ public class TestRunData {
 																		// values
 	private Map<String, String> environment = new HashMap<String, String>();
 	private List<CheckPoint> checkPoints = new ArrayList<CheckPoint>();
+	private List<String> labels = new ArrayList<String>();
 	private ResultState state = ResultState.STARTED;
 	private String errorMessage;
 	private Integer errorCommentId = null; // which key from the map belongs to
@@ -279,6 +280,24 @@ public class TestRunData {
 	public void addCheckPoint(CheckPoint checkPoint) {
 		if (checkPoint != null) {
 			checkPoints.add(checkPoint);
+		}
+	}
+
+	public List<String> getLabels() {
+		return labels;
+	}
+
+	public void addLabel(String label) {
+		if (label != null) {
+			labels.add(label);
+		}
+	}
+
+	public void addLabels(List<String> inputLabels) {
+		if (inputLabels != null) {
+			for (String label : inputLabels) {
+				labels.add(label);
+			}
 		}
 	}
 

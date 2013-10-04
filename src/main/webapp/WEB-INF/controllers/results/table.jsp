@@ -25,13 +25,15 @@
 @import url("<c:url value='/styles/common/links.css'/>");
 @import url("<c:url value='/styles/common/tools.css'/>");
 @import url("<c:url value='/styles/common/resultState.css'/>");
+#show-hide-labels {
+    font-size: x-small;
+}
 </style>
 
 <script>
 var setId = "${setId}";
 var datas = [${chartPieData.dataString}];
 var cpDatas = [${cpPieChartData.dataString}];
-
 
 </script>
 
@@ -76,7 +78,7 @@ var cpDatas = [${cpPieChartData.dataString}];
 <table class="main">
 	<tr class="header-row">
 		<th></th>
-		<th class="testName">Test Name</th>
+		<th class="testName">Test Name <span id="show-hide-labels"> show/hide labels</span></th>
 		<th>Parameter Name</th>
 		<th>Run Time</th>
 		<th>CheckPoint Number</th>
@@ -102,7 +104,8 @@ var cpDatas = [${cpPieChartData.dataString}];
 						index='${row.index}' />
 				</c:if></td>
 			<td class="testName" data-test-name="${test.testName }"><a href="${test.linkToResult}"
-				target="_blank">${test.displayTestName}</a></td>
+				target="_blank">${test.displayTestName}</a>
+                <div class="labels">${test.labels}</div></td>
 			<td class="paramName" data-param-name="${test.paramName }">${test.displayParamName}</td>
 			<td>${test.displayExecutionTime}</td>
 			<td class="checkPointNumber">${test.checkPoints.size()} / ${failedCp}</td>

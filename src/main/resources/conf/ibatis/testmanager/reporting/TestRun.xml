@@ -101,6 +101,13 @@
             (#testRunId#, #checkPoints[].message#, #checkPoints[].mainType#, #checkPoints[].subType#, #checkPoints[].state#)
         </iterate>
     </insert>
+    <insert id="insertTestRunLabels" parameterClass="testmanager.reporting.dao.dto.TestRunDto">
+        INSERT INTO TEST_RUN_LABELS (testRunId, label)
+        VALUES
+        <iterate property="labels" conjunction=",">
+            (#testRunId#, #labels[].label#)
+        </iterate>
+    </insert>
 
 
     <update id="updateTestRunDataMessageId" parameterClass="testmanager.reporting.dao.dto.TestRunDto">
@@ -173,6 +180,15 @@
         FROM TEST_RUN_ENVIRONMENT
         JOIN TEST_RUN_DATA
         ON TEST_RUN_DATA.Id = TEST_RUN_ENVIRONMENT.TestRunId
+        WHERE SetDate <![CDATA[ >= ]]> #value#
+        ORDER BY TestRunId
+    </select>
+    
+    <select id="getTestRunLabelsForId" parameterClass="java.util.Date" resultClass="testmanager.reporting.dao.dto.LabelDto">
+        SELECT testRunId, label
+        FROM TEST_RUN_LABELS
+        JOIN TEST_RUN_DATA
+        ON TEST_RUN_DATA.Id = TEST_RUN_LABELS.TestRunId
         WHERE SetDate <![CDATA[ >= ]]> #value#
         ORDER BY TestRunId
     </select>

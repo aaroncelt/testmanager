@@ -91,6 +91,10 @@ $(document).ready(function() {
     $("#bulk-save-button").click(function() {
         bulkSave();
     });
+    
+    $("#show-hide-labels").click(function() {
+    	$("div.labels").toggle();
+    });
     createPieChart('chart-main', '', datas);
     createPieChart('chart-cp', '', cpDatas);
 });
