@@ -328,6 +328,7 @@ public class ResultTableController {
 		TestRunData runData = runManager.getTestRunData(setId, generateID);
 
 		List<CheckPoint> checkPoints = runData.getCheckPoints();
+		Collections.reverse(checkPoints);
 		return listToHtmlTable(checkPoints);
 	}
 
