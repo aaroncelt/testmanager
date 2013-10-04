@@ -82,7 +82,8 @@
     <div class="set-results-box" id="${map.key}">
         <span> ${map.key} - <a
             href="time_lapse?setName=${map.key}">Time Lapse View</a> - <a
-            href="set_summary?setName=${map.key}">Set Summary View</a>
+            href="set_summary?setName=${map.key}">Set Summary View</a> - <a
+            href="table_latest?setName=${map.key}">Latest result</a>
         </span>
         <table>
             <thead>
