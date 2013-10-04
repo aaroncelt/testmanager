@@ -211,7 +211,8 @@ $(document).ready(function() {
 <div class="table-header">
 <table class="main">
 	<tr>
-		<td>Test Name</td>
+        <td class="collapse">&nbsp;</td>
+		<td class="testName">Test Name</td>
 		<td class="rotate paramName"><div>Parameter Name</div></td>
 		<td class="rotate checkPointNumber"><div>CheckPoint Number</div></td>
         <td class="separate">&nbsp;</td>
