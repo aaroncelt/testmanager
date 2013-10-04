@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.http.HttpServletResponse;
@@ -205,7 +206,17 @@ public class ResultTableController {
 				allCpGourps.add(checkPoint.getMainType());
 			}
 		}
-		Map<TestRunData, Map<String, ResultState>> checkpointBasedResult = new HashMap<TestRunData, Map<String, ResultState>>();
+		Map<TestRunData, Map<String, ResultState>> checkpointBasedResult = new TreeMap<TestRunData, Map<String, ResultState>>(
+				new Comparator<TestRunData>() {
+					@Override
+					public int compare(TestRunData o1, TestRunData o2) {
+						if (o1 != null && o2 != null) {
+							return o1.getDisplayTestName().compareTo(o2.getDisplayTestName());
+						} else {
+							return 0;
+						}
+					}
+				});
 		for (TestRunData testRunData : list) {
 			Map<String, ResultState> cpGroupResult = new HashMap<String, ResultState>();
 			Boolean tcFinished = false;
