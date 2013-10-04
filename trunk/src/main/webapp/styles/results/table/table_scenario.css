@@ -1,0 +1,118 @@
+.separate {
+	padding-right: 10px;
+	border-right: solid 2px black !important;
+	width: 5px
+}
+
+.scenario-name {
+	padding: 1px 3px 1px 3px;
+	border-radius: 2px;
+}
+
+table.main {
+	table-layout: fixed;
+	width: 80%;
+	margin: 0 auto;
+}
+
+table.main td {
+	vertical-align: bottom;
+}
+
+table.main tr:hover {
+	border-bottom: solid 2px gray;
+	padding-bottom: -1px;
+}
+
+table.main tr td:nth-child(2) {
+	word-wrap: normal;
+	white-space: normal !important;
+}
+
+.cp-group {
+	width: 20px;
+	padding: 3px;
+	border-right: dotted 1px gray;
+}
+
+.rotate {
+	overflow: hidden;
+	width: 20px;
+}
+
+.rotate div {
+	display: inline-block;
+	white-space: nowrap;
+	line-height: 1.5;
+	-webkit-transform: rotate(-90deg);
+	-moz-transform: rotate(-90deg);
+	-ms-transform: rotate(-90deg);
+	-o-transform: rotate(-90deg);
+	transform: rotate(-90deg);
+	/* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
+	-webkit-transform-origin: 50% 50%;
+	-moz-transform-origin: 50% 50%;
+	-ms-transform-origin: 50% 50%;
+	-o-transform-origin: 50% 50%;
+	transform-origin: 50% 50%;
+	max-height: 300px;
+}
+
+.rotate div:after {
+	content: "";
+	display: block;
+	margin: -1.5em 0 100%;
+}
+
+.paramName {
+	word-wrap: normal !important;
+	width: 50px;
+	border-left: double;
+}
+
+.highlighted { /*border-left: solid 2px gray;
+    padding-left: 2px;*/
+	border-right: solid 2px gray;
+	padding-right: 2px;
+}
+
+table.main thead td {
+	border: 0px;
+}
+
+body {
+	margin: 0px;
+}
+
+.hidden-phases .phases {
+	display: none;
+}
+
+.visible-phases .phases {
+	display: table-cell;
+}
+
+div.heading-container {
+	border: solid 2px gray;
+	border-radius: 10px 10px 10px 10px;
+	padding: 1px 10px 1px 10px;
+}
+
+div.info-container>div {
+	float: left;
+	position: relative;
+}
+
+div.info-container div#label-search>div {
+	float: left;
+}
+
+div.labels-buttons button {
+	width: 100px;
+	border-radius: 5px;
+}
+
+.sel-labels {
+	height: 200px;
+	min-width: 100px;
+}

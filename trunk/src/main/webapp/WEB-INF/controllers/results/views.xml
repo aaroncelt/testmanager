@@ -60,6 +60,7 @@
             <add-attribute value="/js/jquery-ui.min.js" />
             <add-attribute value="/js/jquery.cookie.js" />
             <add-attribute value="/js/move_title.js" />
+            <add-attribute value="/js/results/table_scenario.js" />
         </put-list-attribute>
     </definition>
 
