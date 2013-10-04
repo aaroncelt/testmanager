@@ -4,7 +4,6 @@ var pos = 0;
  
 function moveTitle(msg)
 {
-  console.log(msg);
   var ml = msg.length;
        
   title = msg.substr(pos,ml) + endChar + msg.substr(0,pos);

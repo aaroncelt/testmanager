@@ -23,153 +23,51 @@
 <style type="text/css" media="screen">
 @import url("<c:url value='/styles/common/table.css'/>");
 @import url("<c:url value='/styles/common/links.css'/>");
+@import url("<c:url value='/styles/common/tools.css'/>");
 @import url("<c:url value='/styles/common/resultState.css'/>");
+@import url("<c:url value='/styles/results/table/setInfo.css'/>");
+@import url("<c:url value='/styles/results/table/table_scenario.css'/>");
 
-.separate {
-    padding-right: 10px;
-    border-right: solid 2px black !important;
-    width: 5px
-}
 
-.scenario-name{
-    padding: 1px 3px 1px 3px;
-    border-radius: 2px;
-}
-table.main {
-        table-layout: fixed;
-        width: 80%;
-        margin: 0 auto;
-}
-table.main td{
-    vertical-align: bottom;
-}
-table.main tr:hover{
-    border-bottom: solid 2px gray;
-    padding-bottom: -1px;
-}
-table.main tr td:nth-child(2) {
-    word-wrap: normal;
-    white-space: normal !important;
-}
-.cp-group{
-    width: 20px;
-    padding: 3px;
-    border-right: dotted 1px gray;
-}
-.rotate {
-    overflow: hidden;
-    width: 20px;
-}
-.rotate div {
-    display: inline-block;
-    white-space: nowrap;
-    line-height: 1.5;
-    -webkit-transform: rotate(-90deg);
-    -moz-transform: rotate(-90deg);
-    -ms-transform: rotate(-90deg);
-    -o-transform: rotate(-90deg);
-    transform: rotate(-90deg);
-
-    /* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
-    -webkit-transform-origin: 50% 50%;
-    -moz-transform-origin: 50% 50%;
-    -ms-transform-origin: 50% 50%;
-    -o-transform-origin: 50% 50%;
-    transform-origin: 50% 50%;
-    max-height: 300px;
-}
-.rotate div:after {
-    content: "";
-    display: block;
-    margin: -1.5em 0 100%;
-}
-.paramName {
-    word-wrap: normal !important;
-    width: 50px;
-    border-left: double;
-}
-.highlighted {
-    /*border-left: solid 2px gray;
-    padding-left: 2px;*/
-    border-right: solid 2px gray;
-    padding-right: 2px;
-}
-table.main thead td{
-    border:  0px;
-}
-body{
-    margin: 0px;
-}
-
-.hidden-phases .phases{
-    display: none;
-}
-
-.visible-phases .phases{
-    display: table-cell;
-}
 </style>
 <script type="text/javascript">
 var setId = '${setId}';
-
-function showAllRows(){
-    $('table.main tbody tr').show();
-}
-
-function filter(term){
-    $('table.main tbody tr').each(function(){
-    	var terms = term.toLowerCase().split(",");
-    	var currentItem = $(this).find("td:first").text().toLowerCase();
-    	var matched = true;
-    	
-    	for (var i=0; i<terms.length;i++){
-    		if(currentItem.indexOf(terms[i])===-1){
-    			matched = false;
-    		}
-    	}
-    	if (matched){
-    	   $(this).show();
-    	} else {
-    	   $(this).hide();
-    	};
-    });
-}
-
-function showHidePhases(){
-	if ($('.hidden-phases').length > 0){
-		$('.hidden-phases').removeClass('hidden-phases').addClass('visible-phases');
-	} else {
-		$('.visible-phases').removeClass('visible-phases').addClass('hidden-phases');
-	}
-}
-
-$(document).ready(function() {
-    $('td.cp-group').hover(function() {
-        var t = parseInt($(this).index()) + 1;
-        $('td:nth-child(' + t + ')').addClass('highlighted');
-    },
-    function() {
-        var t = parseInt($(this).index()) + 1;
-        $('td:nth-child(' + t + ')').removeClass('highlighted');
-    });
-    
-    $('#search-input').keyup(function(event) {
-        if (event.which == 13){
-            filter($(this).val());
-        }
-    });
-    
-    $("div.labels").show();
-});
-
 document.title="${setRunManager.setName}";
 </script>
-<div class="headingDiv">
-	<h3>
-		${setRunManager.setName} -
-		<fmt:formatDate value="${setRunManager.startDate}"
-			pattern="yyyy/MM/dd HH:mm" />
-	</h3>
+<div class="heading-container">
+    <div class="headingDiv">
+    	<h3>
+    		${setRunManager.setName} -
+    		<fmt:formatDate value="${setRunManager.startDate}"
+    			pattern="yyyy/MM/dd HH:mm" />
+    	</h3>
+    </div>
+    <div class="info-container">
+        <div class="setInfo">
+            <%@ include file="/WEB-INF/controllers/results/set_info.jsp"%>
+        </div>
+        <div id="label-search">
+            <div id="labels-available">
+                <select class="sel-labels" multiple>
+                    <c:forEach var="label" items="${labels}">
+                        <option value="${label}">${label}</option>
+                    </c:forEach>
+                </select>
+            </div>
+            <div class="labels-buttons">
+                <button class="add-label">Add</button><br>
+                <button class="remove-label">Remove</button><br>
+                <button class="remove-all-label">Remove all</button><br>
+                <input name="search-method" value="all" type="radio" checked>All
+                <input name="search-method" value="any" type="radio">Any
+            </div>
+            <div id="labels-selected">
+                <select class="sel-labels" multiple>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="clear-both"></div>
 </div>
 <table class="main hidden-phases" id="main">
     <thead>

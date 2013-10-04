@@ -32,8 +32,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -51,12 +49,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import testmanager.reporting.domain.reporting.CheckPoint;
+import testmanager.reporting.domain.reporting.Pair;
 import testmanager.reporting.domain.reporting.ResultState;
 import testmanager.reporting.domain.reporting.TestRunData;
 import testmanager.reporting.domain.results.ChartPieData;
 import testmanager.reporting.service.excel.TestRunXLSGenerator;
 import testmanager.reporting.service.reporting.RunManager;
 import testmanager.reporting.service.reporting.SetRunManager;
+import testmanager.reporting.service.scenariogroup.ScenarioGroupGenerationStrategy;
 import testmanager.reporting.util.ComparatorUtil;
 
 /**
@@ -72,12 +72,13 @@ public class ResultTableController {
 
 	private static final String RESPONSE_OK = "OK";
 	private static final String RESPONSE_BAD = "BAD";
-	private Pattern scenarioGroupPattern;
 	private List<String> checkpointGroups;
 	@Autowired
 	private RunManager runManager;
 	@Autowired
 	private TestRunXLSGenerator generator;
+	@Autowired
+	private ScenarioGroupGenerationStrategy scenarioGroupGenerator;
 
 	@RequestMapping(value = "table_latest", method = RequestMethod.GET)
 	public String tableLatest(@RequestParam String setName) {
@@ -178,14 +179,11 @@ public class ResultTableController {
 		Map<String, Map<String, TestRunData>> scenarioResultMap = new TreeMap<String, Map<String, TestRunData>>();
 		Map<String, List<ResultState>> scenarioCpPrioResultMap = new TreeMap<String, List<ResultState>>();
 		Set<String> allPhases = new HashSet<String>();
+		Set<String> allLabels = new HashSet<String>();
 		for (TestRunData testRunData : list) {
-			Matcher matcher = scenarioGroupPattern.matcher(testRunData.getDisplayTestName());
-			String scenarioKey = testRunData.getDisplayTestName();
-			String phaseKey = "";
-			if (matcher.matches()) {
-				scenarioKey = matcher.group(1);
-				phaseKey = matcher.group(2);
-			}
+			Pair<String, String> scenarioGroup = scenarioGroupGenerator.generateScenarioNameAndPhase(testRunData.getDisplayTestName());
+			String scenarioKey = scenarioGroup.getLeft();
+			String phaseKey = scenarioGroup.getRight();
 			if (!scenarioResultMap.containsKey(scenarioKey)) {
 				scenarioResultMap.put(scenarioKey, new TreeMap<String, TestRunData>());
 				scenarioCpPrioResultMap.put(scenarioKey, new ArrayList<ResultState>(Arrays.asList(new ResultState[checkpointGroups.size()])));
@@ -195,6 +193,7 @@ public class ResultTableController {
 			scenarioCpPrioResultMap.put(scenarioKey, updateCpGourpResult(scenarioCpPrioResultMap.get(scenarioKey), testRunData));
 
 			allPhases.add(phaseKey);
+			allLabels.addAll(testRunData.getLabels());
 		}
 		Map<String, ResultState> scenarioResultStateMap = new TreeMap<String, ResultState>();
 
@@ -208,16 +207,19 @@ public class ResultTableController {
 			scenarioResultStateMap.put(scenario.getKey(), result);
 		}
 
-		List<String> asList = new ArrayList<String>(allPhases);
-		Collections.sort(asList, new AlphanumComparator());
+		List<String> phasesAsList = new ArrayList<String>(allPhases);
+		Collections.sort(phasesAsList, new AlphanumComparator());
+		List<String> labelsAsList = new ArrayList<String>(allLabels);
+		Collections.sort(labelsAsList, new AlphanumComparator());
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("scenarioResultMap", scenarioResultMap);
 		map.put("scenarioCpPrioResultMap", scenarioCpPrioResultMap);
 		map.put("checkpointGroups", checkpointGroups);
 		map.put("scenarioResultStateMap", scenarioResultStateMap);
-		map.put("phases", asList);
-
+		map.put("phases", phasesAsList);
+		map.put("labels", labelsAsList);
+		map.put("testRunData", list.subList(0, 1));
 		map.put("setId", setId);
 		map.put("setRunManager", setRunManager);
 
@@ -359,11 +361,6 @@ public class ResultTableController {
 			break;
 		}
 		return retval;
-	}
-
-	@Value("${screnario.group.pattern}")
-	public void setScenarioGroupPattern(String scenarioGroupPattern) {
-		this.scenarioGroupPattern = Pattern.compile(scenarioGroupPattern);
 	}
 
 	@Value("${scenario.checkpoint.groups}")
