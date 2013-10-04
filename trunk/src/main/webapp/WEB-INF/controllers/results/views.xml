@@ -51,9 +51,9 @@
         </put-list-attribute>
     </definition>
     
-        <definition name="results/table_cpb" extends="standard-layout">
+        <definition name="results/table_scenario" extends="standard-layout">
         <put-attribute name="title" value="Result Table" />
-        <put-attribute name="body" value="/WEB-INF/controllers/results/table_cpb.jsp" />
+        <put-attribute name="body" value="/WEB-INF/controllers/results/table_scenario.jsp" />
         <put-list-attribute name="javascripts">
             <add-attribute value="/js/jquery.min.js" />
             <add-attribute value="/js/jquery-ui.min.js" />
