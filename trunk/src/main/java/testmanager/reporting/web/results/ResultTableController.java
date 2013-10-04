@@ -57,6 +57,7 @@ import testmanager.reporting.domain.results.ChartPieData;
 import testmanager.reporting.service.excel.TestRunXLSGenerator;
 import testmanager.reporting.service.reporting.RunManager;
 import testmanager.reporting.service.reporting.SetRunManager;
+import testmanager.reporting.util.ComparatorUtil;
 
 /**
  * The Class ResultTableController.
@@ -78,47 +79,21 @@ public class ResultTableController {
 	@Autowired
 	private TestRunXLSGenerator generator;
 
-	private static final Comparator<TestRunData> TEST_RUN_NAME_ORDER_ASC = new Comparator<TestRunData>() {
-		@Override
-		public int compare(TestRunData o1, TestRunData o2) {
-			String s1 = o1.getTestName() + o1.getParamName();
-			String s2 = o2.getTestName() + o2.getParamName();
-			return s1.compareTo(s2);
-		}
-	};
-
-	private static final Comparator<TestRunData> TEST_RUN_ERROR_ORDER_ASC = new Comparator<TestRunData>() {
-		@Override
-		public int compare(TestRunData o1, TestRunData o2) {
-			int result;
-			if (ResultState.FAILED.equals(o1.getState()) || ResultState.FAILED.equals(o2.getState())) {
-				result = compareByMessage(o1, o2);
-			} else if (ResultState.NOT_AVAILABLE.equals(o1.getState()) || ResultState.NOT_AVAILABLE.equals(o2.getState())) {
-				result = compareByMessage(o1, o2);
-			} else if (!ResultState.PASSED.equals(o1.getState())) {
-				result = -1;
-			} else if (!ResultState.PASSED.equals(o2.getState())) {
-				result = 1;
-			} else {
-				result = 0;
+	@RequestMapping(value = "table_latest", method = RequestMethod.GET)
+	public String tableLatest(@RequestParam String setName) {
+		String requestParam = "";
+		List<SetRunManager> list = new ArrayList<SetRunManager>();
+		list.addAll(runManager.getRunningSets());
+		list.addAll(runManager.getFinishedSets());
+		Collections.sort(list, ComparatorUtil.SET_RUN_TIME_ORDER_DESC);
+		for (SetRunManager setRunManager : list) {
+			if (setRunManager.getSetName() != null && setRunManager.getSetName().equals(setName)) {
+				requestParam = setRunManager.getId();
+				break;
 			}
-			return result;
 		}
-
-		private int compareByMessage(TestRunData o1, TestRunData o2) {
-			int result;
-			if (o1.getErrorMessage() == null && o2.getErrorMessage() == null) {
-				result = TEST_RUN_NAME_ORDER_ASC.compare(o1, o2);
-			} else if (o1.getErrorMessage() != null && o2.getErrorMessage() == null) {
-				result = -1;
-			} else if (o1.getErrorMessage() == null && o2.getErrorMessage() != null) {
-				result = 1;
-			} else {
-				result = o1.getErrorMessage().compareTo(o2.getErrorMessage());
-			}
-			return result;
-		}
-	};
+		return "forward:table_scenario?setId=" + requestParam;
+	}
 
 	/**
 	 * Controller for handling the test run data view.
@@ -131,8 +106,8 @@ public class ResultTableController {
 		logger.info("OPEN results/table {setId=" + setId + "}");
 
 		List<TestRunData> list = runManager.getAllTestRunData(setId);
-		// Collections.sort(list, TEST_RUN_NAME_ORDER_ASC);
-		Collections.sort(list, TEST_RUN_ERROR_ORDER_ASC);
+		// Collections.sort(list, ComparatorUtil.TEST_RUN_NAME_ORDER_ASC);
+		Collections.sort(list, ComparatorUtil.TEST_RUN_ERROR_ORDER_ASC);
 
 		SetRunManager setRunManager = runManager.getSetRunManager(setId);
 		// Collect Pie Chart Data
@@ -205,19 +180,21 @@ public class ResultTableController {
 		Set<String> allPhases = new HashSet<String>();
 		for (TestRunData testRunData : list) {
 			Matcher matcher = scenarioGroupPattern.matcher(testRunData.getDisplayTestName());
+			String scenarioKey = testRunData.getDisplayTestName();
+			String phaseKey = "";
 			if (matcher.matches()) {
-				String scenarioKey = matcher.group(1);
-				String phaseKey = matcher.group(2);
-				if (!scenarioResultMap.containsKey(scenarioKey)) {
-					scenarioResultMap.put(scenarioKey, new TreeMap<String, TestRunData>());
-					scenarioCpPrioResultMap.put(scenarioKey, new ArrayList<ResultState>(Arrays.asList(new ResultState[checkpointGroups.size()])));
-				}
-
-				scenarioResultMap.get(scenarioKey).put(phaseKey, testRunData);
-				scenarioCpPrioResultMap.put(scenarioKey, updateCpGourpResult(scenarioCpPrioResultMap.get(scenarioKey), testRunData));
-
-				allPhases.add(phaseKey);
+				scenarioKey = matcher.group(1);
+				phaseKey = matcher.group(2);
 			}
+			if (!scenarioResultMap.containsKey(scenarioKey)) {
+				scenarioResultMap.put(scenarioKey, new TreeMap<String, TestRunData>());
+				scenarioCpPrioResultMap.put(scenarioKey, new ArrayList<ResultState>(Arrays.asList(new ResultState[checkpointGroups.size()])));
+			}
+
+			scenarioResultMap.get(scenarioKey).put(phaseKey, testRunData);
+			scenarioCpPrioResultMap.put(scenarioKey, updateCpGourpResult(scenarioCpPrioResultMap.get(scenarioKey), testRunData));
+
+			allPhases.add(phaseKey);
 		}
 		Map<String, ResultState> scenarioResultStateMap = new TreeMap<String, ResultState>();
 
