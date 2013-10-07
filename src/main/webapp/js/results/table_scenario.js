@@ -36,6 +36,20 @@ function filter() {
 	}
 }
 
+function filter_text(term) {
+	$('table.main tbody tr').each(
+			function() {
+				var currentItem = $(this).find("td:first").text();
+				matched = containsAll(term.toLowerCase().split(","),
+						currentItem.toLowerCase());
+				if (matched) {
+					$(this).show();
+				} else {
+					$(this).hide();
+				};
+			});
+}
+
 function containsAll(terms, items) {
 	for ( var i = 0; i < terms.length; i++) {
 		if (items.indexOf(terms[i]) === -1) {
@@ -95,18 +109,18 @@ $(document).ready(function() {
 
 	$('#search-input').keyup(function(event) {
 		if (event.which == 13) {
-			filter($(this).val());
+			filter_text($(this).val());
 		}
 	});
 
 	$("#label-search button.add-label").click(function() {
 		addLabel($("#label-search select.sel-labels option:selected"));
 	});
-	
+
 	$("#label-search button.remove-label").click(function() {
 		removeLabel($("#label-search select.sel-labels option:selected"));
 	});
-	
+
 	$("#label-search button.remove-all-label").click(function() {
 		removeLabel($("#label-search select.sel-labels option"));
 	});
