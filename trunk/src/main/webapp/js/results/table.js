@@ -97,6 +97,17 @@ $(document).ready(function() {
     });
     createPieChart('chart-main', '', datas);
     createPieChart('chart-cp', '', cpDatas);
+    
+    $('div#cp-filter ul.checkbox input[type=checkbox]').change(function() {
+
+	    var vals = $('div#cp-filter ul.checkbox input[type=checkbox]:checked').map(function() {
+	        return $(this).val();
+	    }).get().join('|');
+
+	    $('input#filterCpLabels').val(vals);
+
+	});
+    
 });
 
 function saveAll() {

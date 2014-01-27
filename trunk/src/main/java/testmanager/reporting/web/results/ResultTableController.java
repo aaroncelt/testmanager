@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -58,6 +59,11 @@ import testmanager.reporting.service.reporting.RunManager;
 import testmanager.reporting.service.reporting.SetRunManager;
 import testmanager.reporting.service.scenariogroup.ScenarioGroupGenerationStrategy;
 import testmanager.reporting.util.ComparatorUtil;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 
 /**
  * The Class ResultTableController.
@@ -103,8 +109,9 @@ public class ResultTableController {
 	 * @return the model and view
 	 */
 	@RequestMapping(value = "table", method = RequestMethod.GET)
-	public ModelAndView table(@RequestParam String setId) {
-		logger.info("OPEN results/table {setId=" + setId + "}");
+	public ModelAndView table(@RequestParam String setId, @RequestParam(required = false) String filterCpLabels,
+			@RequestParam(required = false) String filterType) {
+		logger.info("OPEN results/table {setId=" + setId + ", filterType=" + filterType + ", filterCpLabels=" + filterCpLabels + "}");
 
 		List<TestRunData> list = runManager.getAllTestRunData(setId);
 		// Collections.sort(list, ComparatorUtil.TEST_RUN_NAME_ORDER_ASC);
@@ -123,7 +130,10 @@ public class ResultTableController {
 				Integer.toString(setRunManager.getResultStatFailed().get() + setRunManager.getResultStatNA().get() - knownIssues));
 
 		Integer passedCP = 0, failedCP = 0;
+		Map<String, ResultState> cpBasedResultMap = new TreeMap<String, ResultState>();
+		FilterType filterTypeValue = StringUtils.isNotEmpty(filterCpLabels) ? getFilterType(filterType) : FilterType.NO_FILTER;
 		for (TestRunData testRunData : list) {
+			cpBasedResultMap.put(testRunData.getId(), getFilteredCpBasedResult(filterTypeValue, filterCpLabels, testRunData));
 			for (CheckPoint cp : testRunData.getCheckPoints()) {
 				switch (cp.getState()) {
 				case PASSED:
@@ -149,8 +159,82 @@ public class ResultTableController {
 		map.put("cpPieChartData", cpPieChartData);
 		map.put("passedCP", passedCP);
 		map.put("failedCP", failedCP);
+		map.put("cpBasedResultMap", cpBasedResultMap);
+		map.put("filterType", filterTypeValue);
+		map.put("filterCpLabels", filterCpLabels);
+		map.put("availabelCpFilters", checkpointGroups);
 
 		return new ModelAndView("results/table", map);
+	}
+
+	private ResultState getFilteredCpBasedResult(final FilterType filterType, String filterCpLabels, TestRunData testRunData) {
+		ResultState retval = null;
+
+		final List<String> filter;
+
+		if (StringUtils.isNotEmpty(filterCpLabels)) {
+			filter = Lists.newArrayList(Splitter.on("|").trimResults().split(filterCpLabels));
+		} else {
+			filter = Lists.newArrayList();
+		}
+		Predicate<CheckPoint> cpFilter = new Predicate<CheckPoint>() {
+			@Override
+			public boolean apply(CheckPoint arg0) {
+				boolean apply;
+				switch (filterType) {
+				case INCLUDE:
+					apply = !Collections.disjoint(filter, getCpGroups(arg0));
+					break;
+				case EXCLUDE:
+					apply = Collections.disjoint(filter, getCpGroups(arg0));
+					break;
+				default:
+					apply = true;
+					break;
+				}
+				return apply;
+			}
+
+		};
+
+		Collection<CheckPoint> filteredCps = Collections2.filter(testRunData.getCheckPoints(), cpFilter);
+		if (testRunData.getState() == ResultState.NOT_AVAILABLE) {
+			retval = ResultState.NOT_AVAILABLE;
+		} else {
+			for (CheckPoint checkPoint : filteredCps) {
+				if (retval == null) {
+					retval = checkPoint.getState();
+				} else {
+					if (checkPoint.getState() != ResultState.PASSED) {
+						retval = checkPoint.getState();
+						break;
+					}
+				}
+			}
+		}
+
+		return retval;
+	}
+
+	private FilterType getFilterType(String filterTypeString) {
+		FilterType retval;
+		try {
+			retval = FilterType.valueOf(filterTypeString.toUpperCase());
+		} catch (Exception e) {
+			retval = FilterType.NO_FILTER;
+		}
+		return retval;
+	}
+
+	private enum FilterType {
+		INCLUDE, EXCLUDE, NO_FILTER;
+	}
+
+	private List<String> getCpGroups(CheckPoint cp) {
+		List<String> retval = Lists.newArrayList();
+		retval.add(cp.getMainType());
+		retval.addAll(Lists.newArrayList(Splitter.on(" ").trimResults().omitEmptyStrings().split(cp.getSubType())));
+		return retval;
 	}
 
 	@RequestMapping(value = "table_scenario", method = RequestMethod.GET)
