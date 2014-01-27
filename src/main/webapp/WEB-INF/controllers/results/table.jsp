@@ -71,6 +71,9 @@ document.title="${setRunManager.setName}";
 			</div>
 		</div>
 	</div>
+<div>
+    <%@ include file="/WEB-INF/controllers/results/cp_filter.jsp"%>
+</div>
 <div id="search-module">
     <%@ include file="/WEB-INF/controllers/results/search_module.jsp"%>
 </div>
@@ -82,8 +85,18 @@ document.title="${setRunManager.setName}";
 		<th>Parameter Name</th>
 		<th>Run Time</th>
 		<th>CheckPoint Number</th>
-		<th>State</th>
-		<th>Error Message</th>
+		<th>Error Message"</th>
+        <c:choose>
+            <c:when test="${filterType == 'EXCLUDE'}">
+                <th>Overall Checkpoint Result <br>(excluded: ${excludeCpLabels })</th>
+            </c:when>
+            <c:when test="${filterType == 'INCLUDE'}">
+                <th>Overall Checkpoint Result <br>(included: ${includeCpLabels })</th>
+            </c:when>
+            <c:otherwise>
+                <th>State</th>
+            </c:otherwise>
+        </c:choose>
 		<th>Error Type</th>
 		<th>Comment</th>
 		<th><input type="checkbox" class="select-all"><span id="saveAllLink" class="saveLink" onclick="saveAll();">SAVE SUGGESTIONS</span><span id="saveAllLinkHidden" class="saveLinkHidden">SAVING...</span>
@@ -98,10 +111,42 @@ document.title="${setRunManager.setName}";
                     <c:set var="failedCp" value="${failedCp + 1}" />
                  </c:if>
             </c:forEach>
-			<td><c:if test="${!empty test.checkPoints}">
-					<img src="<c:url value="/images/plus.png"/>" class="link"
-                        testname="<c:out value="${test.testName}"/>" paramname='${test.paramName}'
-						index='${row.index}' />
+            <c:set var="stateClass" value="" />
+			<c:choose>
+				<c:when test="${test.state == 'STARTED'}">
+                    <c:set var="stateClass" value="${stateClass} started" />
+				</c:when>
+				<c:when test="${test.state == 'PASSED'}">
+                    <c:set var="stateClass" value="${stateClass} passed" />
+				</c:when>
+				<c:when test="${test.state == 'FAILED'}">
+                    <c:set var="stateClass" value="${stateClass} failed" />
+				</c:when>
+				<c:when test="${test.state == 'NOT_AVAILABLE'}">
+                    <c:set var="stateClass" value="${stateClass} notavailable" />
+				</c:when>
+				<c:when test="${test.state == 'ABORTED'}">
+                    <c:set var="stateClass" value="${stateClass} aborted" />
+				</c:when>
+			</c:choose>
+            <c:set var="cpResultClass" value="cpResult" />
+            <c:choose>
+                <c:when test="${cpBasedResultMap[test.id] == 'PASSED'}">
+                    <c:set var="cpResultClass" value="${cpResultClass} passed" />
+                </c:when>
+                <c:when test="${cpBasedResultMap[test.id] == 'FAILED'}">
+                    <c:set var="cpResultClass" value="${cpResultClass} failed" />
+                </c:when>
+                <c:when test="${cpBasedResultMap[test.id] == 'NOT_AVAILABLE'}">
+                    <c:set var="cpResultClass" value="${cpResultClass} notavailable" />
+                </c:when>
+            </c:choose>
+            
+            
+			<td class="<c:if test="${!empty filterType and filterType ne 'NO_FILTER'}">${stateClass}</c:if>">
+                <c:if test="${!empty test.checkPoints}">
+					<img src="<c:url value="/images/plus.png"/>" class="link" testname="<c:out value="${test.testName}"/>" paramname='${test.paramName}'
+						index='${row.index}' style="background:white;-webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px;" />
 				</c:if></td>
 			<td class="testName" data-test-name="${test.testName }"><a href="${test.linkToResult}"
 				target="_blank">${test.displayTestName}</a>
@@ -109,27 +154,15 @@ document.title="${setRunManager.setName}";
 			<td class="paramName" data-param-name="${test.paramName }">${test.displayParamName}</td>
 			<td>${test.displayExecutionTime}</td>
 			<td class="checkPointNumber">${test.checkPoints.size()} / ${failedCp}</td>
-			<c:choose>
-				<c:when test="${test.state == 'STARTED'}">
-					<td class='resultState started'>${test.state}</td>
-				</c:when>
-				<c:when test="${test.state == 'PASSED'}">
-					<td class='resultState passed'>${test.state}</td>
-				</c:when>
-				<c:when test="${test.state == 'FAILED'}">
-					<td class='resultState failed'>${test.state}</td>
-				</c:when>
-				<c:when test="${test.state == 'NOT_AVAILABLE'}">
-					<td class='resultState notavailable'>${test.state}</td>
-				</c:when>
-				<c:when test="${test.state == 'ABORTED'}">
-					<td class='resultState aborted'>${test.state}</td>
-				</c:when>
-				<c:otherwise>
-					<td class="resultState">${test.state}</td>
-				</c:otherwise>
-			</c:choose>
 			<td class="errorMessage">${test.displayErrorMessage}</td>
+            <c:choose>
+                <c:when test="${!empty filterType and filterType ne 'NO_FILTER'}">
+                    <td class="${cpResultClass}">${cpBasedResultMap[test.id]}</td>
+                </c:when>
+                <c:otherwise>
+			        <td class="${stateClass}">${test.state}</td>
+                </c:otherwise>
+            </c:choose>
 			<td class="errorType"><c:if
 					test="${test.state != 'PASSED' && test.state != 'STARTED'}">
 					<select class="error-type">

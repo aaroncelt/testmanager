@@ -119,3 +119,7 @@ div.labels {
 	display: none;
 	white-space: normal;
 }
+
+fieldset.group li{
+	display: inline;
+}
