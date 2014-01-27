@@ -1,6 +1,6 @@
 <div id="cp-filter">
     <fieldset class="group"> 
-        <legend>Exclude labels</legend>
+        <legend>Exclude / Include labeled checkpoints</legend>
         <ul class="checkbox">
             <c:forEach var="cpFilterLabel" items="${availabelCpFilters}">
                 <c:choose>

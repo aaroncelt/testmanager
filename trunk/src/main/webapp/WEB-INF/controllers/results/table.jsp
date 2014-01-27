@@ -88,10 +88,10 @@ document.title="${setRunManager.setName}";
 		<th>Error Message"</th>
         <c:choose>
             <c:when test="${filterType == 'EXCLUDE'}">
-                <th>Overall Checkpoint Result <br>(excluded: ${excludeCpLabels })</th>
+                <th>Overall Checkpoint Result <br>(excluded: ${filterCpLabels })</th>
             </c:when>
             <c:when test="${filterType == 'INCLUDE'}">
-                <th>Overall Checkpoint Result <br>(included: ${includeCpLabels })</th>
+                <th>Overall Checkpoint Result <br>(included: ${filterCpLabels  })</th>
             </c:when>
             <c:otherwise>
                 <th>State</th>
