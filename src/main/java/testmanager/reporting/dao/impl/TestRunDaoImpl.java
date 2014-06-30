@@ -326,6 +326,7 @@ public class TestRunDaoImpl extends SqlMapClientDaoSupport implements TestRunDao
 		template.delete("cleanTestRunDataOlderThen", keepFromDate); // must be
 																	// the last
 																	// one
+		template.delete("cleanUnusedTestLabels");
 	}
 
 }
