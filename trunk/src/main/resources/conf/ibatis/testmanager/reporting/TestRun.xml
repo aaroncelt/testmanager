@@ -289,6 +289,11 @@
         FROM TEST_RUN_DATA
         WHERE SetDate <![CDATA[ <= ]]> #value#
     </delete>
+    <delete id="cleanUnusedTestLabels">
+        DELETE
+        FROM TEST_RUN_LABELS
+        WHERE testRunId NOT IN (SELECT Id FROM TEST_RUN_DATA)
+    </delete>
     <delete id="cleanTestRunParamsOlderThen" parameterClass="java.util.Date">
         DELETE
         FROM TEST_RUN_PARAMS
