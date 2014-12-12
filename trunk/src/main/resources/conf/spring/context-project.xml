@@ -37,6 +37,12 @@
         <!-- CUSTOMIZE DefaultTestRunDisplayNameGenerator by implementing TestRunDisplayNameGenerator. -->
     </bean>
 
+	<bean id="scenarioGroupGenerator" class="testmanager.reporting.service.scenariogroup.DefaultScenarioGroupGeneratorStrategy">
+        <!-- This generator will create scenario groups with phase for Scenario based view. -->
+        <!-- CUSTOMIZE DefaultScenarioGroupGeneratorStrategy by implementing ScenarioGroupGenerationStrategy. -->
+    </bean>
+	
+
     <bean id="linkGeneratorFactory" class="testmanager.reporting.service.linkgeneration.LinkGeneratorFactory">
         <constructor-arg>
             <util:map map-class="java.util.HashMap"
