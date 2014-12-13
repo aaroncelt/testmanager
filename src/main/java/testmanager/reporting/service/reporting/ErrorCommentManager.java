@@ -22,10 +22,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import testmanager.reporting.domain.reporting.ErrorComment;
 import testmanager.reporting.domain.reporting.TestRunData;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
 /**
@@ -39,10 +43,6 @@ public class ErrorCommentManager {
     private Map<String, Map<Integer, ErrorComment>> errorComments = Maps.newConcurrentMap(); // error message, auto inc. ID, comment object
     private Map<String, ErrorComment> errorCommentPatterns = Maps.newConcurrentMap();
 
-    public ErrorCommentManager() {
-        errorCommentPatterns.put("hehe", new ErrorComment("1", "asdd"));
-    }
-
     /**
      * Gets the comment for an ErrorComment.
      *
@@ -52,8 +52,8 @@ public class ErrorCommentManager {
      */
     public String getComment(String errorMessage, Integer errorId) {
         String result = null;
-        if (errorMessage != null && errorId != null && errorComments.get(errorMessage) != null && errorComments.get(errorMessage).get(errorId) != null) {
-            result = errorComments.get(errorMessage).get(errorId).getComment();
+        if (errorMessage != null && errorId != null && getErrorComments(errorMessage).get(errorId) != null) {
+            result = getErrorComments(errorMessage).get(errorId).getComment();
         }
         return result;
     }
@@ -67,8 +67,8 @@ public class ErrorCommentManager {
      */
     public String getType(String errorMessage, Integer errorId) {
         String result = null;
-        if (errorMessage != null && errorId != null && errorComments.get(errorMessage) != null && errorComments.get(errorMessage).get(errorId) != null) {
-            result = errorComments.get(errorMessage).get(errorId).getType();
+        if (errorMessage != null && errorId != null && getErrorComments(errorMessage).get(errorId) != null) {
+            result = getErrorComments(errorMessage).get(errorId).getType();
         }
         return result;
     }
@@ -80,14 +80,7 @@ public class ErrorCommentManager {
      * @return the comment suggestion
      */
     public String getCommentSuggestion(String errorMessage) {
-        String result = null;
-        if (errorMessage != null && errorComments.get(errorMessage) != null && !errorComments.get(errorMessage).isEmpty()) {
-            Iterator<Integer> i = errorComments.get(errorMessage).keySet().iterator();
-            while (i.hasNext() && result == null) {
-                result = getComment(errorMessage, i.next());
-            }
-        }
-        return result;
+        return getSuggestedErrorComment(errorMessage).getComment();
     }
 
     /**
@@ -97,14 +90,40 @@ public class ErrorCommentManager {
      * @return the type suggestion
      */
     public String getTypeSuggestion(String errorMessage) {
-        String result = null;
-        if (errorMessage != null && errorComments.get(errorMessage) != null && !errorComments.get(errorMessage).isEmpty()) {
-            Iterator<Integer> i = errorComments.get(errorMessage).keySet().iterator();
-            while (i.hasNext() && result == null) {
-                result = getType(errorMessage, i.next());
+        return getSuggestedErrorComment(errorMessage).getType();
+    }
+
+    private ErrorComment getSuggestedErrorComment(String errorMessage) {
+        ErrorComment errorCommentFromPattern = getMatchingErrorComment(errorMessage);
+        ErrorComment errorCommentFromHistory = getErrorComment(errorMessage);
+        return Objects.firstNonNull(errorCommentFromPattern, errorCommentFromHistory);
+    }
+
+    private ErrorComment getErrorComment(String errorMessage) {
+        ErrorComment retval = new ErrorComment(null, null);
+        Map<Integer, ErrorComment> errorComments = getErrorComments(errorMessage);
+        Iterator<Entry<Integer, ErrorComment>> it = errorComments.entrySet().iterator();
+        while (it.hasNext() && retval.getComment() == null) {
+            retval = it.next().getValue();
+        }
+        return retval;
+    }
+
+    private ErrorComment getMatchingErrorComment(String errorMessage) {
+        String matchedKey = null;
+        for (String key : errorCommentPatterns.keySet()) {
+            Matcher matcher = Pattern.compile(key).matcher(Objects.firstNonNull(errorMessage, ""));
+            if (matcher.find()) {
+                matchedKey = key;
+                break;
             }
         }
-        return result;
+        return matchedKey != null ? errorCommentPatterns.get(matchedKey) : null;
+    }
+
+    private Map<Integer, ErrorComment> getErrorComments(String errorMessage) {
+        Map<Integer, ErrorComment> errorCommentsMap = errorMessage != null ? errorComments.get(errorMessage) : null;
+        return Objects.firstNonNull(errorCommentsMap, new HashMap<Integer, ErrorComment>());
     }
 
     /**
@@ -119,8 +138,8 @@ public class ErrorCommentManager {
         Integer result = null;
 
         if (errorMessage != null) {
-            Map<Integer, ErrorComment> map = errorComments.get(errorMessage);
-            if (map == null) {
+            Map<Integer, ErrorComment> map = getErrorComments(errorMessage);
+            if (map.isEmpty()) {
                 // no such error message yet in the memory
                 map = new HashMap<Integer, ErrorComment>();
                 map.put(messageId, comment);
@@ -142,7 +161,7 @@ public class ErrorCommentManager {
                     if (map.get(errorId).getLinkedIds().isEmpty()) {
                         map.remove(errorId);
                     }
-                    if (errorComments.get(errorMessage).isEmpty()) {
+                    if (getErrorComments(errorMessage).isEmpty()) {
                         errorComments.remove(errorMessage);
                     }
                 }
@@ -195,19 +214,19 @@ public class ErrorCommentManager {
      */
     public synchronized void cleanComments() {
         for (String message : errorComments.keySet()) {
-            if (errorComments.get(message) != null) {
+            if (getErrorComments(message) != null) {
                 // remove comments with 0 links
                 List<Integer> removeErrorIds = new ArrayList<Integer>();
-                for (Integer errorId : errorComments.get(message).keySet()) {
-                    if (!errorComments.get(message).get(errorId).hasLinkedIds()) {
+                for (Integer errorId : getErrorComments(message).keySet()) {
+                    if (!getErrorComments(message).get(errorId).hasLinkedIds()) {
                         removeErrorIds.add(errorId);
                     }
                 }
                 for (Integer errorId : removeErrorIds) {
-                    errorComments.get(message).remove(errorId);
+                    getErrorComments(message).remove(errorId);
                 }
             }
-            if (errorComments.get(message) == null || errorComments.get(message).isEmpty()) {
+            if (getErrorComments(message) == null || getErrorComments(message).isEmpty()) {
                 // remove message
                 errorComments.remove(message);
             }
