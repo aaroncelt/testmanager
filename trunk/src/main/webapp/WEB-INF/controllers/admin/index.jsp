@@ -16,45 +16,51 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <%@ include file="/WEB-INF/controllers/include.jsp"%>
-
-<style type="text/css">
-td {
-    border-top: dotted 1px gray;
-    text-align: left;
-    font-size: small;
-}
-.sectionHeader {
-    border-top: solid 1px black;
-    text-align: left;
-}
-.deleteLink {
-    cursor: pointer;
-    color: #FD9B11;
-}
-.pageName {
-    padding-left: 50px;
-}
+<style type="text/css" media="screen">
+@import url("<c:url value='/styles/results/index.css'/>");
+@import url("<c:url value='/styles/common/links.css'/>");
 </style>
 
-<script>
-function deleteOldTestRuns(daysToKeepInDatabase) {
-    var r = confirm("Are you sure?");
-    if (r == true) {
-        window.location.href = "deleteOldTestRuns?daysToKeepInDatabase=" + daysToKeepInDatabase;
-    }
-}
-</script>
+<h1 class="pageName">
+	<fmt:message key="admin.index.heading" />
+</h1>
 
-<h1 class="pageName"><fmt:message key="admin.index.heading" /></h1>
-
-<table width="95%" border="0" cellspacing="0" cellpadding="5" align="center">
-    <tr>
-        <td>
-            Delete test run data older then: ${daysToKeepInDatabase} day(s).<br/>
-            This will be done automatically by a job.
-        </td>
-        <td>
-            <span class="deleteLink" onclick="deleteOldTestRuns('${daysToKeepInDatabase}');">Force delete</span>
-        </td>
-    </tr>
-</table>
+<div class="set-results-box">
+	<span>Error Comment patterns</span>
+	<div id="error-pattern-table">
+		<form action="#">
+			<table>
+				<thead>
+					<tr>
+						<th><label for="error-pattern">Error pattern</label></th>
+						<th><label for="error-type">Type</label></th>
+						<th><label for="error-comment">Comment</label></th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach var="entry" items="${errorComments}">
+						<tr>
+							<td>${entry.key}</td>
+							<td>${entry.value.type }</td>
+							<td>${entry.value.comment }</td>
+							<td><a class="deleteLink"
+								href="deleteErrorCommentPattern?pattern=${entry.key}"
+								title="Click here to delete pattern"></span></td>
+						</tr>
+					</c:forEach>
+					<tr>
+						<td><input type="text" name="error-pattern"></td>
+						<td><select name="error-pattern">
+								<option>ENV</option>
+								<option>BUG</option>
+						</select></td>
+						<td><input type="text" name="error-comment"></td>
+						<td><button>Add</button>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
+	<div></div>
+</div>

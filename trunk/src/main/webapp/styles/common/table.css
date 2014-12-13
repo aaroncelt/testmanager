@@ -40,40 +40,12 @@ table.main td.testName {
 	color: gray;
 }
 
-.deleteLink {
-	width: 16px;
-	height: 16px;
-	line-height: 1px;
-	display: block;
-	cursor: pointer;
-	background: url(../../images/trash.png);
-}
-
-.saveLink {
-	cursor: pointer;
-	color: #FD9B11;
-}
-
-.save-link-disabled {
-	pointer-events: none;
-	color: gray;
-}
-
-.link {
-	cursor: pointer;
-}
-
-.saveLinkHidden {
-	color: black;
-	display: none;
-}
-
 table.main td.sectionHeader {
 	border-top: solid 1px black;
 	text-align: left;
 }
 
-table.main th{
+table.main th {
 	white-space: nowrap;
 	text-align: left;
 	padding: 3px;
@@ -81,7 +53,7 @@ table.main th{
 	border-top: dotted 1px gray;
 }
 
-table.main th.cp-group{
+table.main th.cp-group {
 	font-size: smaller;
 }
 
@@ -120,6 +92,6 @@ div.labels {
 	white-space: normal;
 }
 
-fieldset.group li{
+fieldset.group li {
 	display: inline;
 }

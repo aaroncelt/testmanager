@@ -247,4 +247,8 @@ public class DataLifecycleManager {
         return result;
     }
 
+    public ErrorCommentManager getErrorCommentManager() {
+        return errorCommentManager;
+    }
+
 }
