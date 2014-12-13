@@ -251,4 +251,8 @@ public class DataLifecycleManager {
         return errorCommentManager;
     }
 
+    public RunManager getRunManager() {
+        return runManager;
+    }
+
 }

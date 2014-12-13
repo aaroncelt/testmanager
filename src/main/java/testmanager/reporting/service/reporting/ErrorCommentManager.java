@@ -188,7 +188,10 @@ public class ErrorCommentManager {
     }
 
     /**
-     * Clean the comments memory database. Remove comments with zero linkings. Remove error messages with zero comments. Should be called only from DataLyfecycleManager. Used as a recurring job.
+     * Clean the comments memory database.
+     * Remove comments with zero linkings.
+     * Remove error messages with zero comments.
+     * Should be called only from DataLyfecycleManager. Used as a recurring job.
      */
     public synchronized void cleanComments() {
         for (String message : errorComments.keySet()) {
@@ -217,5 +220,13 @@ public class ErrorCommentManager {
 
     public Map<String, Map<Integer, ErrorComment>> getErrorComments() {
         return errorComments;
+    }
+
+    public void deleteErrorCommentPattern(String pattern) {
+        errorCommentPatterns.remove(pattern);
+    }
+
+    public void addErrorCommentPattern(String pattern, String type, String comment) {
+        errorCommentPatterns.put(pattern, new ErrorComment(comment, type));
     }
 }

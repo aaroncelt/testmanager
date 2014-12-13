@@ -19,6 +19,7 @@ package testmanager.reporting.web.admin;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,7 @@ public class AdminController {
         Map<String, Object> data = Maps.newHashMap();
         data.put("daysToKeepInDatabase", daysToKeepInDatabase);
         data.put("errorComments", errorComments);
+        data.put("errorTypes", dataLifecycleManager.getRunManager().getErrorTypes());
 
         return new ModelAndView("admin/index", data);
     }
@@ -74,4 +76,21 @@ public class AdminController {
         return new RedirectView("index");
     }
 
+    @RequestMapping(value = "deleteErrorCommentPattern", method = RequestMethod.GET)
+    public RedirectView deleteErrorCommentPattern(@RequestParam String pattern) {
+        logger.info("Deleting error comment pattern: " + pattern);
+        dataLifecycleManager.getErrorCommentManager().deleteErrorCommentPattern(pattern);
+        return new RedirectView("index");
+    }
+
+    @RequestMapping(value = "addErrorCommentPattern", method = RequestMethod.GET)
+    public RedirectView addErrorCommentPattern(@RequestParam String pattern, @RequestParam String type, @RequestParam String comment) {
+        if (StringUtils.isNotBlank(pattern)) {
+            logger.info("Adding error comment pattern: " + pattern + " - " + type + " " + comment);
+            dataLifecycleManager.getErrorCommentManager().addErrorCommentPattern(pattern, type, comment);
+        } else {
+            logger.info("Empty pattern not added: " + pattern + " - " + type + " " + comment);
+        }
+        return new RedirectView("index");
+    }
 }
