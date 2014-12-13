@@ -28,13 +28,13 @@
 <div class="set-results-box">
 	<span>Error Comment patterns</span>
 	<div id="error-pattern-table">
-		<form action="#">
-			<table>
+		<form action="addErrorCommentPattern" method="get">
+			<table class="main">
 				<thead>
 					<tr>
-						<th><label for="error-pattern">Error pattern</label></th>
-						<th><label for="error-type">Type</label></th>
-						<th><label for="error-comment">Comment</label></th>
+						<th><label for="pattern">Error pattern</label></th>
+						<th><label for="type">Type</label></th>
+						<th><label for="comment">Comment</label></th>
 						<th>&nbsp;</th>
 					</tr>
 				</thead>
@@ -50,12 +50,13 @@
 						</tr>
 					</c:forEach>
 					<tr>
-						<td><input type="text" name="error-pattern"></td>
-						<td><select name="error-pattern">
-								<option>ENV</option>
-								<option>BUG</option>
+						<td><input type="text" name="pattern"></td>
+						<td><select name="type">
+								<c:forEach var="type" items="${errorTypes}">
+									<option value="${type}">${type}</option>
+								</c:forEach>
 						</select></td>
-						<td><input type="text" name="error-comment"></td>
+						<td><input type="text" name="comment"></td>
 						<td><button>Add</button>
 					</tr>
 				</tbody>
