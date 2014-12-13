@@ -141,7 +141,6 @@ public class ErrorCommentManager {
             Map<Integer, ErrorComment> map = getErrorComments(errorMessage);
             if (map.isEmpty()) {
                 // no such error message yet in the memory
-                map = new HashMap<Integer, ErrorComment>();
                 map.put(messageId, comment);
                 result = new Integer(messageId);
                 messageId++;
