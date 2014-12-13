@@ -22,10 +22,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import testmanager.reporting.domain.reporting.ErrorComment;
 import testmanager.reporting.domain.reporting.TestRunData;
+
+import com.google.common.collect.Maps;
 
 /**
  * The Class ErrorCommentManager. Handles the error messages and its comments for the system.
@@ -34,8 +35,13 @@ import testmanager.reporting.domain.reporting.TestRunData;
  */
 public class ErrorCommentManager {
 
-    private int messageId = 0;	// automatically incremented ID for the error messages in the memory
-    private Map<String, Map<Integer, ErrorComment>> errorComments = new ConcurrentHashMap<String, Map<Integer, ErrorComment>>();	// error message, auto inc. ID, comment object
+    private int messageId = 0; // automatically incremented ID for the error messages in the memory
+    private Map<String, Map<Integer, ErrorComment>> errorComments = Maps.newConcurrentMap(); // error message, auto inc. ID, comment object
+    private Map<String, ErrorComment> errorCommentPatterns = Maps.newConcurrentMap();
+
+    public ErrorCommentManager() {
+        errorCommentPatterns.put("hehe", new ErrorComment("1", "asdd"));
+    }
 
     /**
      * Gets the comment for an ErrorComment.
@@ -142,12 +148,12 @@ public class ErrorCommentManager {
                 }
 
                 // no such comment for the message in the memory yet in this if
-                if (errorId == null && result == null) {	// no comment yet for the test run
+                if (errorId == null && result == null) { // no comment yet for the test run
                     // putting new comment for the error message
                     map.put(messageId, comment);
                     result = new Integer(messageId);
                     messageId++;
-                } else if (result == null) {	// there already was a comment for the test run
+                } else if (result == null) { // there already was a comment for the test run
                     if (map.get(errorId).getLinkedIds().size() == 1) {
                         // updating comment for the error message
                         map.put(errorId, comment);
@@ -173,18 +179,16 @@ public class ErrorCommentManager {
      */
     public synchronized void removeSetLinkings(SetRunManager setRunManager) {
         for (TestRunData data : setRunManager.getAllTestRunData()) {
-            if (data.getErrorCommentId() != null	// there was a comment for the run
-                    && errorComments.get(data.getErrorMessage()) != null	// the message exists in the map
-                    && errorComments.get(data.getErrorMessage()).get(data.getErrorCommentId()) != null) {	// the massage have the saved comment
+            if (data.getErrorCommentId() != null // there was a comment for the run
+                    && errorComments.get(data.getErrorMessage()) != null // the message exists in the map
+                    && errorComments.get(data.getErrorMessage()).get(data.getErrorCommentId()) != null) { // the massage have the saved comment
                 errorComments.get(data.getErrorMessage()).get(data.getErrorCommentId()).removeLinkedId(data.getIdFull());
             }
         }
     }
 
     /**
-     * Clean the comments memory database.
-     * Remove comments with zero linkings. Remove error messages with zero comments.
-     * Should be called only from DataLyfecycleManager. Used as a recurring job.
+     * Clean the comments memory database. Remove comments with zero linkings. Remove error messages with zero comments. Should be called only from DataLyfecycleManager. Used as a recurring job.
      */
     public synchronized void cleanComments() {
         for (String message : errorComments.keySet()) {
@@ -207,8 +211,11 @@ public class ErrorCommentManager {
         }
     }
 
+    public Map<String, ErrorComment> getErrorCommentPatterns() {
+        return errorCommentPatterns;
+    }
+
     public Map<String, Map<Integer, ErrorComment>> getErrorComments() {
         return errorComments;
     }
-
 }

@@ -1,8 +1,35 @@
 @CHARSET "UTF-8";
-a,a:link,a:active,a:visited
-	{
+
+.deleteLink {
+	width: 16px;
+	height: 16px;
+	line-height: 1px;
+	display: block;
+	cursor: pointer;
+	background: url(../../images/trash.png);
+}
+
+.saveLink {
+	cursor: pointer;
+	color: #FD9B11;
+}
+
+.save-link-disabled {
+	pointer-events: none;
+	color: gray;
+}
+
+.link {
+	cursor: pointer;
+}
+
+.saveLinkHidden {
+	color: black;
+	display: none;
+}
+
+a, a:link, a:active, a:visited {
 	color: #fd9b11;
-	background: transparent;
 	text-decoration: none;
 	font-style: normal;
 }

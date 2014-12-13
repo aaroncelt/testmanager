@@ -17,6 +17,8 @@
  */
 package testmanager.reporting.web.admin;
 
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import testmanager.reporting.domain.reporting.ErrorComment;
 import testmanager.reporting.service.reporting.DataLifecycleManager;
+
+import com.google.common.collect.Maps;
 
 /**
  * Controller for the administration page.
@@ -53,7 +58,13 @@ public class AdminController {
 
     @RequestMapping(value = "index", method = RequestMethod.GET)
     public ModelAndView comments() {
-        return new ModelAndView("admin/index", "daysToKeepInDatabase", daysToKeepInDatabase);
+        Map<String, ErrorComment> errorComments = dataLifecycleManager.getErrorCommentManager().getErrorCommentPatterns();
+
+        Map<String, Object> data = Maps.newHashMap();
+        data.put("daysToKeepInDatabase", daysToKeepInDatabase);
+        data.put("errorComments", errorComments);
+
+        return new ModelAndView("admin/index", data);
     }
 
     @RequestMapping(value = "deleteOldTestRuns", method = RequestMethod.GET)
