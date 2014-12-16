@@ -19,7 +19,40 @@
 <style type="text/css" media="screen">
 @import url("<c:url value='/styles/results/index.css'/>");
 @import url("<c:url value='/styles/common/links.css'/>");
+
+span.warning-message{
+	color: #a94442;
+	background-color: #f2dede;
+	border-color: #ebccd1;
+	padding: 5px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
 </style>
+<script>
+
+$(document).ready(function() {
+	$("input[name=pattern]").keyup(function() {
+		if (isValidateRegex()){
+			$("#add-button").removeAttr("disabled");
+			$("span.warning-message").hide();
+		} else {
+			$("#add-button").attr("disabled","disabled");
+			$("span.warning-message").show();
+		}
+	})
+});
+
+function isValidateRegex(){
+	var pattern = $("input[name=pattern]").val();
+	try{
+		new RegExp(pattern);
+		return true;
+	} catch (e) {
+		return false;
+	}
+}
+</script>
 
 <h1 class="pageName">
 	<fmt:message key="admin.index.heading" />
@@ -57,7 +90,7 @@
 								</c:forEach>
 						</select></td>
 						<td><input type="text" name="comment"></td>
-						<td><button>Add</button>
+						<td><button id="add-button">Add</button> <span class="warning-message" style="display: none;">Wrong pattern syntax!</span></td>
 					</tr>
 				</tbody>
 			</table>

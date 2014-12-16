@@ -18,6 +18,8 @@
 package testmanager.reporting.web.admin;
 
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -85,12 +87,22 @@ public class AdminController {
 
     @RequestMapping(value = "addErrorCommentPattern", method = RequestMethod.GET)
     public RedirectView addErrorCommentPattern(@RequestParam String pattern, @RequestParam String type, @RequestParam String comment) {
-        if (StringUtils.isNotBlank(pattern)) {
+        if (StringUtils.isNotBlank(pattern) && isValidRegex(pattern)) {
             logger.info("Adding error comment pattern: " + pattern + " - " + type + " " + comment);
             dataLifecycleManager.getErrorCommentManager().addErrorCommentPattern(pattern, type, comment);
         } else {
             logger.info("Empty pattern not added: " + pattern + " - " + type + " " + comment);
         }
         return new RedirectView("index");
+    }
+
+    private boolean isValidRegex(String pattern) {
+        boolean retval = true;
+        try {
+            Pattern.compile(pattern);
+        } catch (PatternSyntaxException e) {
+            retval = false;
+        }
+        return retval;
     }
 }
